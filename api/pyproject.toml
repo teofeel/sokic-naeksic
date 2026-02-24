@@ -9,3 +9,6 @@ description = "Sokic Graph API"
 dependencies = []
 requires-python = ">=3.10"
 
+[tool.setuptools]
+provides = ["sokic"]
+
