@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sokic"
+version = "0.1"
+description = "Sokic Graph API"
+dependencies = []
+requires-python = ">=3.10"
+
