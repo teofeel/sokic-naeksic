@@ -105,7 +105,7 @@ class Graph:
     # Get element of graph
     # Params: key: int | str
     # Returns: Edge | Node
-    def get_element(self, key):
+    def get_element(self, key) -> Edge | Node | None:
         return self.nodes.get(key) or self.edges.get(key)
 
     # Get Node
@@ -120,7 +120,7 @@ class Graph:
     def get_edge(self, key) -> Edge:
         return self.edges.get(key)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> Edge | Node | None:
         return self.nodes.get(key) or self.edges.get(key)
 
 
