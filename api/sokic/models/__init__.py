@@ -2,6 +2,5 @@ from graph import Graph
 from edge import Edge
 from node import Node
 from graph_element import GraphElement
-from status import Status
 
-__all__ = ["Graph", "Edge", "Node", "GraphElement", "Status"]
+__all__ = ["Graph", "Edge", "Node", "GraphElement"]
