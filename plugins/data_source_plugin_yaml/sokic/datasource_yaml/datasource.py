@@ -88,7 +88,7 @@ class YamlDataSource(DataSourcePlugin):
             actual_id = node_id or ref_id
 
             if not actual_id:
-                return
+                continue
 
             if actual_id not in g.nodes:
                 node_data = {
