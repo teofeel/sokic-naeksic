@@ -19,6 +19,7 @@ class YamlDataSource(DataSourcePlugin):
         default_config = {
             "id_attribute": "@id",
             "ref_attribute": "@ref",
+            "direction_attribute": "@direction",
             "children_attribute": "children"
         }
 
@@ -47,15 +48,16 @@ class YamlDataSource(DataSourcePlugin):
                 data = yaml.safe_load(stream)
 
             direction = GraphDirection.DIRECTED if self._is_directed(data) else GraphDirection.UNDIRECTED
-            cycle_policy = GraphCycle.CYCLIC if self._is_cyclic(data["graph"]) else GraphCycle.ACYCLIC
+            cycle_policy = GraphCycle.CYCLIC if self._is_cyclic(data) else GraphCycle.ACYCLIC
 
             g = Graph(direction=direction, cycle_policy=cycle_policy)
 
             id_attr = self.config.get("id_attribute")
             ref_attr = self.config.get("ref_attribute")
             child_attr = self.config.get("children_attribute")
+            direction_attr = self.config.get("direction_attribute")
 
-            self.__process(g, data["graph"], id_attr, ref_attr, child_attr)
+            self.__process(g, data, id_attr, ref_attr, child_attr, direction_attr)
 
             return g
 
@@ -65,7 +67,7 @@ class YamlDataSource(DataSourcePlugin):
             print(exc)
 
 
-    def __process(self, g: Graph, data: dict, id_attr="@id", ref_attr="@ref", child_attr="children") -> None:
+    def __process(self, g: Graph, data: dict, id_attr="@id", ref_attr="@ref", child_attr="children", direction_attr="@direction") -> None:
         """
         Recursively process the data
         :param g:
@@ -86,11 +88,11 @@ class YamlDataSource(DataSourcePlugin):
             actual_id = node_id or ref_id
 
             if not actual_id:
-                return
+                continue
 
             if actual_id not in g.nodes:
                 node_data = {
-                    key: val for key,val in current_data.items() if key not in [id_attr, ref_attr, child_attr]
+                    key: val for key,val in current_data.items() if key not in [id_attr, ref_attr, child_attr, direction_attr]
                 }
 
                 g.add_node(Node(actual_id, **node_data))
@@ -112,22 +114,36 @@ class YamlDataSource(DataSourcePlugin):
         :param data:
         :return:
         """
+        id_attr = self.config.get("id_attribute")
         ref_attr = self.config.get("ref_attribute")
-        queue = deque([data])
+        child_attr = self.config.get("children_attribute")
+
+        queue = deque([(data, set())])
 
         while queue:
-            item = queue.popleft()
+            current_data, ancestors = queue.popleft()
 
-            if isinstance(item, dict):
-                if ref_attr in item:
-                    return True
+            if not isinstance(current_data, dict):
+                continue
 
-                for value in item.values():
-                    queue.append(value)
+            node_id = current_data.get(id_attr)
+            ref_id = current_data.get(ref_attr)
+            actual_id = node_id or ref_id
 
-            elif isinstance(item, list):
-                for value in item:
-                    queue.append(value)
+            if not actual_id:
+                continue
+
+            if actual_id in ancestors:
+                return True
+
+            new_ancestors = ancestors.copy()
+            new_ancestors.add(actual_id)
+
+            children = current_data.get(child_attr)
+            if isinstance(children, list):
+                for child in children:
+                    if isinstance(child, dict):
+                        queue.append((child, new_ancestors))
 
         return False
 
@@ -139,7 +155,7 @@ class YamlDataSource(DataSourcePlugin):
         :param data:
         :return:
         """
-        value = data.get("direction")
+        value = data.get("@direction")
 
         if not value:
             return True
