@@ -1,6 +1,7 @@
-from api.models.graph import Graph
-from api.services.Plugin import Plugin
+from sokic.api.models import Graph
+from sokic.api.services import Plugin
 import abc
+
 
 class DataSourcePlugin(Plugin):
 
