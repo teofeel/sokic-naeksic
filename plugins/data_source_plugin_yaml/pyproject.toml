@@ -13,7 +13,7 @@ dependencies = [
 requires-python = ">=3.10"
 
 [project.entry-points."sokic.datasource"]
-yaml_datasource = "sokic.datasource:YamlDataSource"
+yaml_datasource = "sokic.datasource_yaml.datasource:YamlDataSource"
 
 [tool.setuptools]
 provides = ["sokic"]

@@ -28,6 +28,14 @@ class YamlDataSource(DataSourcePlugin):
             self.config = default_config
 
 
+    def name(self) -> str:
+        return "datasource_yaml"
+
+
+    def type(self) -> str:
+        return "datasource"
+
+
     def convert_to_graph(self, filepath: str) -> Graph | None:
         """
         Method to convert yaml file to graph
@@ -39,7 +47,7 @@ class YamlDataSource(DataSourcePlugin):
                 data = yaml.safe_load(stream)
 
             direction = GraphDirection.DIRECTED if self._is_directed(data) else GraphDirection.UNDIRECTED
-            cycle_policy = GraphCycle.CYCLIC if self._is_cyclic(data) else GraphCycle.ACYCLIC
+            cycle_policy = GraphCycle.CYCLIC if self._is_cyclic(data["graph"]) else GraphCycle.ACYCLIC
 
             g = Graph(direction=direction, cycle_policy=cycle_policy)
 
@@ -47,7 +55,7 @@ class YamlDataSource(DataSourcePlugin):
             ref_attr = self.config.get("ref_attribute")
             child_attr = self.config.get("children_attribute")
 
-            self.__process(g, data, id_attr, ref_attr, child_attr)
+            self.__process(g, data["graph"], id_attr, ref_attr, child_attr)
 
             return g
 
