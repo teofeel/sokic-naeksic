@@ -5,3 +5,5 @@
 .idea/inspectionProfiles/profiles_settings.xml
 /api/build/
 /api/sokic_api.egg-info/
+/plugins/data_source_plugin_yaml/build/
+/plugins/data_source_plugin_yaml/sokic_datasource_yaml.egg-info/
