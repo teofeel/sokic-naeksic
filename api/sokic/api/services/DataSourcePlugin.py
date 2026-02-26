@@ -1,7 +1,8 @@
 from api.models.graph import Graph
+from api.services.Plugin import Plugin
 import abc
 
-class DataSourcePlugin(abc.ABC):
+class DataSourcePlugin(Plugin):
 
     @abc.abstractmethod
     def convert_to_graph(self, filepath: str) -> Graph:
