@@ -1,4 +1,4 @@
-from graph_element import GraphElement
+from .graph_element import GraphElement
 
 class Node(GraphElement):
     def __init__(self, id, **kwargs):
