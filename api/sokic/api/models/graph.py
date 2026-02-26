@@ -1,10 +1,7 @@
-from api.sokic.models.graph_cycle import GraphCycle
-from api.sokic.models.graph_direction import GraphDirection
-from graph_element import GraphElement
-from edge import Edge
-from node import Node
-from graph_direction import GraphDirection
-from graph_cycle import GraphCycle
+from .edge import Edge
+from .node import Node
+from .graph_direction import GraphDirection
+from .graph_cycle import GraphCycle
 
 class Graph:
     def __init__(self, direction: GraphDirection, cycle_policy: GraphCycle):
@@ -177,4 +174,3 @@ class Graph:
                 if self.__has_path(neighbor_id, end_node, visited, edge.id):
                     return True
         return False
-

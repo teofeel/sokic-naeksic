@@ -1,5 +1,6 @@
-from api.sokic.models import Graph
+from api.models.graph import Graph
 import abc
+
 class DataSourcePlugin(abc.ABC):
 
     @abc.abstractmethod

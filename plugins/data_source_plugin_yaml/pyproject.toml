@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sokic-datasource-yaml"
+version = "0.1"
+description = "Component for loading and converting data"
+dependencies = [
+    "pyyaml",
+    "sokic-api"
+]
+requires-python = ">=3.10"
+
+[project.entry-points."sokic.datasource"]
+yaml_datasource = "sokic.datasource:YamlDataSource"
+
+[tool.setuptools]
+provides = ["sokic"]

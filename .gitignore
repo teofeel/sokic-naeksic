@@ -3,3 +3,5 @@
 .idea/sokic-naeksic.iml
 .idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
+/api/build/
+/api/sokic_api.egg-info/
