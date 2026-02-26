@@ -114,22 +114,36 @@ class YamlDataSource(DataSourcePlugin):
         :param data:
         :return:
         """
+        id_attr = self.config.get("id_attribute")
         ref_attr = self.config.get("ref_attribute")
-        queue = deque([data])
+        child_attr = self.config.get("children_attribute")
+
+        queue = deque([(data, set())])
 
         while queue:
-            item = queue.popleft()
+            current_data, ancestors = queue.popleft()
 
-            if isinstance(item, dict):
-                if ref_attr in item:
-                    return True
+            if not isinstance(current_data, dict):
+                continue
 
-                for value in item.values():
-                    queue.append(value)
+            node_id = current_data.get(id_attr)
+            ref_id = current_data.get(ref_attr)
+            actual_id = node_id or ref_id
 
-            elif isinstance(item, list):
-                for value in item:
-                    queue.append(value)
+            if not actual_id:
+                continue
+
+            if actual_id in ancestors:
+                return True
+
+            new_ancestors = ancestors.copy()
+            new_ancestors.add(actual_id)
+
+            children = current_data.get(child_attr)
+            if isinstance(children, list):
+                for child in children:
+                    if isinstance(child, dict):
+                        queue.append((child, new_ancestors))
 
         return False
 
