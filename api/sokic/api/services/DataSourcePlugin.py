@@ -1,5 +1,5 @@
-from sokic.api.models import Graph
-from sokic.api.services import Plugin
+from sokic.api.models.graph import Graph
+from sokic.api.services.Plugin import Plugin
 import abc
 
 

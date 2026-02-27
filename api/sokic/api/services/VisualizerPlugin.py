@@ -1,10 +1,10 @@
 import json
 from typing import Dict, Any
 
-from sokic.api.models import Graph
-from sokic.api.models import Node
-from sokic.api.models import Edge
-from sokic.api.services import Plugin
+from sokic.api.models.graph import Graph
+from sokic.api.models.node import Node
+from sokic.api.models.edge import Edge
+from sokic.api.services.Plugin import Plugin
 import abc
 
 

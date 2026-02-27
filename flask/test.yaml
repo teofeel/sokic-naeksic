@@ -1,0 +1,41 @@
+  "@id": "grandpa_marko"
+  name: "Marko"
+  role: "Patrijarh"
+  born: 1945
+  children:
+    - "@id": "father_dragan"
+      name: "Dragan"
+      role: "Otac"
+      born: 1970
+      children:
+        - "@id": "son_nikola"
+          name: "Nikola"
+          role: "Sin"
+          born: 1995
+          hobby: "Programiranje"
+        - "@id": "daughter_ana"
+          name: "Ana"
+          role: "Ćerka"
+          born: 1998
+          hobby: "Dizajn"
+          children:
+            - "@id": "grandchild_luka"
+              name: "Luka"
+              role: "Unuk"
+              born: 2022
+    - "@id": "aunt_jelena"
+      name: "Jelena"
+      role: "Tetka"
+      born: 1975
+      children:
+        - "@id": "cousin_stefan"
+          name: "Stefan"
+          role: "Brat od tetke"
+          born: 2000
+          children:
+            - "@ref": "grandpa_marko"
+    - "@id": "uncle_ivan"
+      name: "Ivan"
+      role: "Stric"
+      born: 1978
+      status: "Inostranstvo"
