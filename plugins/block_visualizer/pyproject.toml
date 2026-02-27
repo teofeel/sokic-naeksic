@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sokic-block-visualizer"
+version = "0.1.0"
+description = "D3.js Block Visualizer plugin for the Sokic graph platform"
+dependencies = [
+    "sokic-api"
+]
+requires-python = ">=3.10"
+
+[project.entry-points."sokic.visualizer"]
+block = "sokic.block_visualizer.block_visualizer:BlockVisualizer"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+include = ["sokic*"]
