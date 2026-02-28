@@ -26,43 +26,6 @@ class PluginLoader:
 
             plugin_name: str = plugin.name()
             self.plugins[plugin_type][plugin_name] = plugin
-        #self.load_all_datasource()
-        #self.load_all_visualizer()
-
-
-    #def load_all_datasource(self):
-    #    """
-    #    Used to load all available datasource plugins
-    #    :return:
-    #    """
-    #    for ep in entry_points(group='sokic.datasource'):
-    #        p = ep.load()
-    #        plugin: DataSourcePlugin = p()
-    #        plugin_type: str = plugin.type()
-#
-    #        if plugin_type != "datasource":
-    #            continue
-#
-    #        plugin_name: str = plugin.name()
-    #        self.plugins['datasource'][plugin_name] = plugin
-#
-#
-    #def load_all_visualizer(self):
-    #    """
-    #    Used to load all available visualizer plugins
-    #    :return:
-    #    """
-    #    for ep in entry_points(group='sokic.visualizer'):
-    #        p = ep.load()
-    #        plugin: Any = p()
-    #        plugin_type: str = plugin.type()
-#
-    #        if plugin_type != "visualizer":
-    #            continue
-#
-    #        plugin_name: str = plugin.name()
-    #        self.plugins['visualizer'][plugin_name] = plugin
-#
 
     def load_plugin_by_name(self, group: str, name: str):
         """
