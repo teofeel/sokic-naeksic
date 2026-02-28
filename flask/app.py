@@ -15,7 +15,7 @@ app = Flask(__name__)
 @app.route('/')
 def test_visualizer():
 
-    yaml_plugin = loader.datasource_plugins.get('datasource_yaml')
+    yaml_plugin = loader.plugins['datasource']['yaml']
     print(yaml_plugin)
 
     graph_model = yaml_plugin.convert_to_graph('test.yaml')
@@ -23,7 +23,7 @@ def test_visualizer():
     print(graph_model.edges)
     print(graph_model.nodes)
 
-    visualizer = loader.visualizer_plugins.get('block')
+    visualizer = loader.plugins['visualizer']['block']
 
     graph_html = visualizer.visualize(graph_model)
     # print(graph_html)
