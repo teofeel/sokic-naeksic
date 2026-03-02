@@ -44,6 +44,7 @@ class YamlDataSource(DataSourcePlugin):
         :return:
         """
         try:
+            # update this not to read whole file, instead only file object
             with open(filepath, "r", encoding="utf-8") as stream:
                 data = yaml.safe_load(stream)
 

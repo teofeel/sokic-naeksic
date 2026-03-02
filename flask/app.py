@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, render_template
+from flask import Flask, render_template_string, render_template, request
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 loader = PluginLoader()
 loader.load_all()
@@ -46,6 +46,23 @@ def test_visualizer():
     #    </html>
     #""", graph_content=graph_html)
 
+
+@app.route('/load-file', methods=['POST'])
+def load_file():
+    file = request.files['data']
+
+    filename = file.filename
+    ext = os.path.splitext(filename)[1].lower().lstrip('.')
+
+    plugin = loader.plugins['datasource'][ext]
+    graph = plugin.convert_to_graph(file.stream)
+
+    visualizer = loader.plugins['visualizer']['block']
+    graph_html = visualizer.visualize(graph)
+
+    return render_template('main-view.html', plugin_html=graph_html)
+
+    # add to active workspace and show on page
 
 if __name__ == "__main__":
     app.run(debug=True)
