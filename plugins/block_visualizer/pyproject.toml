@@ -11,7 +11,7 @@ dependencies = [
 ]
 requires-python = ">=3.10"
 
-[project.entry-points."sokic.visualizer"]
+[project.entry-points."sokic.plugin"]
 block = "sokic.block_visualizer.block_visualizer:BlockVisualizer"
 
 [tool.setuptools]

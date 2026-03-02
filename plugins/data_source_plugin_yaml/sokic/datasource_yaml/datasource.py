@@ -30,7 +30,7 @@ class YamlDataSource(DataSourcePlugin):
 
 
     def name(self) -> str:
-        return "datasource_yaml"
+        return "yaml"
 
 
     def type(self) -> str:
