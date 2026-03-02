@@ -1,9 +1,10 @@
 from flask import Flask, render_template_string, render_template
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
+from sokic.api.services.search_service import SearchService
 loader = PluginLoader()
 loader.load_all()
 
-
+search_service = SearchService()
 import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent
@@ -45,7 +46,19 @@ def test_visualizer():
     #    </body>
     #    </html>
     #""", graph_content=graph_html)
+@app.route('/test-search')
+def test_all():
+    yaml_plugin = loader.plugins['datasource']['yaml']
+    graph = yaml_plugin.convert_to_graph('test.yaml')
 
+    results = {}
 
+    # ── SEARCH tests ─────────────────────────────────────────────
+    results["search_nikola"]  = [n.id for n in search_service.search_nodes(graph, "nikola")]
+    results["search_born"]    = [n.id for n in search_service.search_nodes(graph, "born")]
+    results["search_1995"]    = [n.id for n in search_service.search_nodes(graph, "1995")]
+    results["search_grandpa"] = [n.id for n in search_service.search_edges(graph, "grandpa")]
+
+    return results
 if __name__ == "__main__":
     app.run(debug=True)
