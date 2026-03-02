@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sokic-simple-visualizer"
+version = "0.1.0"
+description = "D3.js Simple Visualizer plugin for the Sokic graph platform"
+dependencies = [
+    "sokic-api"
+]
+requires-python = ">=3.10"
+
+[project.entry-points."sokic.plugin"]
+block = "sokic.simple_visualizer.simple_visualizer:SimpleVisualizer"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+include = ["sokic*"]
