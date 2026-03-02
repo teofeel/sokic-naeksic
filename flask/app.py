@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, render_template
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
-from sokic.api.services.search_service import SearchService
+from sokic.api.services.search_service import SearchService, FilterTypeError, FilterParseError
 loader = PluginLoader()
 loader.load_all()
 
@@ -58,6 +58,29 @@ def test_all():
     results["search_born"]    = [n.id for n in search_service.search_nodes(graph, "born")]
     results["search_1995"]    = [n.id for n in search_service.search_nodes(graph, "1995")]
     results["search_grandpa"] = [n.id for n in search_service.search_edges(graph, "grandpa")]
+
+    # ── FILTER tests ─────────────────────────────────────────────
+    results["filter_born>=1990"]  = [n.id for n in search_service.filter_nodes(graph, "born >= 1990")]
+    results["filter_born==1995"]  = [n.id for n in search_service.filter_nodes(graph, "born == 1995")]
+    results["filter_born<1970"]   = [n.id for n in search_service.filter_nodes(graph, "born < 1970")]
+    results["filter_role==Sin"]   = [n.id for n in search_service.filter_nodes(graph, "role == Sin")]
+    results["filter_name!=Marko"] = [n.id for n in search_service.filter_nodes(graph, "name != Marko")]
+
+    # ── CHAINING: filter then search ─────────────────────────────
+    g2 = search_service.filter_subgraph(graph, "born >= 1990")
+    g3 = search_service.search_subgraph(g2, "a")
+    results["chain_filter_then_search"] = [n.id for n in g3.nodes.values()]
+
+    # ── ERROR handling  ───────────────────────────
+    try:
+        search_service.filter_nodes(graph, "born >= notanumber")
+    except FilterTypeError as e:
+        results["type_error"] = str(e)
+
+    try:
+        search_service.filter_nodes(graph, "this is not valid")
+    except FilterParseError as e:
+        results["parse_error"] = str(e)
 
     return results
 if __name__ == "__main__":
