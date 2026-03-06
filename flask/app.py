@@ -31,8 +31,8 @@ def test_visualizer():
     print(graph_model.edges)
     print(graph_model.nodes)
 
-    visualizer = loader.plugins['visualizer']['block']
-
+    #visualizer = loader.plugins['visualizer']['block']
+    visualizer = loader.plugins['visualizer']['simple']
     graph_html = visualizer.visualize(graph_model)
     # print(graph_html)
 

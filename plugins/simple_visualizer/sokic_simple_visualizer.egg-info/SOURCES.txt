@@ -1,0 +1,11 @@
+pyproject.toml
+./sokic/simple_visualizer/__init__.py
+./sokic/simple_visualizer/simple_visualizer.py
+sokic/simple_visualizer/__init__.py
+sokic/simple_visualizer/simple_visualizer.py
+sokic_simple_visualizer.egg-info/PKG-INFO
+sokic_simple_visualizer.egg-info/SOURCES.txt
+sokic_simple_visualizer.egg-info/dependency_links.txt
+sokic_simple_visualizer.egg-info/entry_points.txt
+sokic_simple_visualizer.egg-info/requires.txt
+sokic_simple_visualizer.egg-info/top_level.txt
