@@ -9,3 +9,6 @@
 /plugins/data_source_plugin_yaml/sokic_datasource_yaml.egg-info/
 /plugins/block_visualizer/build/
 /plugins/block_visualizer/sokic_block_visualizer.egg-info/
+__pycache__/
+*.py[cod]
+*.pyo

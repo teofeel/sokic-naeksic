@@ -1,10 +1,12 @@
 from flask import Flask, render_template_string, render_template
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
-from sokic.api.services.search_service import SearchService, FilterTypeError, FilterParseError
+from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
+
 loader = PluginLoader()
 loader.load_all()
+search_service = SearchServiceImpl()
+filter_service = FilterServiceImpl()
 
-search_service = SearchService()
 import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent
@@ -47,38 +49,38 @@ def test_visualizer():
     #    </html>
     #""", graph_content=graph_html)
 @app.route('/test-search')
-def test_all():
+def test_filter_and_search():
     yaml_plugin = loader.plugins['datasource']['yaml']
     graph = yaml_plugin.convert_to_graph('test.yaml')
 
     results = {}
 
-    # ── SEARCH tests ─────────────────────────────────────────────
+    # ── SEARCH ───────────────────────────────────────────────────
     results["search_nikola"]  = [n.id for n in search_service.search_nodes(graph, "nikola")]
     results["search_born"]    = [n.id for n in search_service.search_nodes(graph, "born")]
     results["search_1995"]    = [n.id for n in search_service.search_nodes(graph, "1995")]
     results["search_grandpa"] = [n.id for n in search_service.search_edges(graph, "grandpa")]
 
-    # ── FILTER tests ─────────────────────────────────────────────
-    results["filter_born>=1990"]  = [n.id for n in search_service.filter_nodes(graph, "born >= 1990")]
-    results["filter_born==1995"]  = [n.id for n in search_service.filter_nodes(graph, "born == 1995")]
-    results["filter_born<1970"]   = [n.id for n in search_service.filter_nodes(graph, "born < 1970")]
-    results["filter_role==Sin"]   = [n.id for n in search_service.filter_nodes(graph, "role == Sin")]
-    results["filter_name!=Marko"] = [n.id for n in search_service.filter_nodes(graph, "name != Marko")]
+    # ── FILTER ───────────────────────────────────────────────────
+    results["filter_born>=1990"]  = [n.id for n in filter_service.filter_nodes(graph, "born >= 1990")]
+    results["filter_born==1995"]  = [n.id for n in filter_service.filter_nodes(graph, "born == 1995")]
+    results["filter_born<1970"]   = [n.id for n in filter_service.filter_nodes(graph, "born < 1970")]
+    results["filter_role==Sin"]   = [n.id for n in filter_service.filter_nodes(graph, "role == Sin")]
+    results["filter_name!=Marko"] = [n.id for n in filter_service.filter_nodes(graph, "name != Marko")]
 
-    # ── CHAINING: filter then search ─────────────────────────────
-    g2 = search_service.filter_subgraph(graph, "born >= 1990")
+    # ── CHAINING: filter to search ────────────────────────────────
+    g2 = filter_service.filter_subgraph(graph, "born >= 1990")
     g3 = search_service.search_subgraph(g2, "a")
     results["chain_filter_then_search"] = [n.id for n in g3.nodes.values()]
 
-    # ── ERROR handling  ───────────────────────────
+    # ── ERROR handling ────────────────────────────────────────────
     try:
-        search_service.filter_nodes(graph, "born >= notanumber")
+        filter_service.filter_nodes(graph, "born >= notanumber")
     except FilterTypeError as e:
         results["type_error"] = str(e)
 
     try:
-        search_service.filter_nodes(graph, "this is not valid")
+        filter_service.filter_nodes(graph, "this is not valid")
     except FilterParseError as e:
         results["parse_error"] = str(e)
 
