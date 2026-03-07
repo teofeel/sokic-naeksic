@@ -1,3 +1,4 @@
 from .plugin_loader import PluginLoader
-
-__all__ = ['PluginLoader']
+from .search_service_impl import SearchServiceImpl
+from .filter_service_impl import FilterServiceImpl, FilterParseError, FilterTypeError
+__all__ = ['PluginLoader', "SearchServiceImpl", "FilterServiceImpl", "FilterParseError", "FilterTypeError"]
