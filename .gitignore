@@ -65,3 +65,4 @@ plugins/simple_visualizer/sokic_simple_visualizer.egg-info/requires.txt
 plugins/simple_visualizer/sokic_simple_visualizer.egg-info/SOURCES.txt
 plugins/simple_visualizer/sokic_simple_visualizer.egg-info/top_level.txt
 core/sokic/__pycache__/__init__.cpython-311.pyc
+/plugins/simple_visualizer/build/
