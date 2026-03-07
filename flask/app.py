@@ -1,4 +1,7 @@
 from flask import Flask, render_template_string, render_template
+
+from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
+from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
 
@@ -85,5 +88,24 @@ def test_filter_and_search():
         results["parse_error"] = str(e)
 
     return results
+
+
+@app.route("/workspace")
+def workspace():
+    plugin = loader.plugins['datasource']['yaml']
+
+    graph = plugin.convert_to_graph('test.yaml')
+
+    manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
+
+    id = manager.create_workspace('test', graph, 'yaml', 'block')
+    manager.switch_workspace_name('test')
+
+    #manager.set_active_visualizer('simple')
+    graph_html = manager.get_active_render()
+
+    return render_template('main-view.html', plugin_html=graph_html)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

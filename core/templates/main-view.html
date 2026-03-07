@@ -99,7 +99,7 @@
         function showTooltip(d, tooltip,element){
                 if (!d) return;
 
-                d3.select(element).select("rect")
+                d3.select(element).select("circle, rect")
                     .transition().duration(150)
                     .style("stroke", "#007bff")
                     .style("stroke-width", "3px");
@@ -123,7 +123,7 @@
         }
 
         function removeTooltip(tooltip, element){
-            d3.select(element).select("rect")
+            d3.select(element).select("circle, rect")
                 .transition().duration(150)
                 .style("stroke", "#333")
                 .style("stroke-width", "1px");
