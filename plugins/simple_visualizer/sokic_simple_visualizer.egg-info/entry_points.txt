@@ -1,2 +1,0 @@
-[sokic.plugin]
-block = sokic.simple_visualizer.simple_visualizer:SimpleVisualizer
