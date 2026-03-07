@@ -15,7 +15,6 @@ class WorkspaceManager:
         """
         self.plugin_loader = plugin_loader
         self.repository: WorkspaceRepository = repository
-        self.active_workspace_id: Optional[str] = None
 
     def create_workspace(self, name: str, graph: Graph, datasource_key: str, visualizer_key: str) -> str:
         """
@@ -41,100 +40,76 @@ class WorkspaceManager:
         workspace.set_visualizer(visualizer_plugin)
 
         self.repository.save(workspace)
-        self.active_workspace_id = workspace.id
 
         return workspace.id
 
-    def switch_workspace_id(self, workspace_id: str) -> bool:
-        """
-        Used to switch workspace
-        :param workspace_id: ID of the workspace
-        :return: True if switched, otherwise False
-        """
-        workspace = self.repository.load_by_id(workspace_id)
-        if workspace is None:
-            return False
 
-        self.active_workspace_id = workspace_id
-        return True
-
-    def switch_workspace_name(self, workspace_name: str) -> bool:
-        """
-        Used to switch workspace
-        :param workspace_id: ID of the workspace
-        :return: True if switched, otherwise False
-        """
-        workspace = self.repository.load_by_name(workspace_name)
-        if workspace is None:
-            return False
-
-        self.active_workspace_id = workspace.id
-        return True
-
-
-    def get_active_render(self) -> Optional[str]:
+    def get_render(self, workspace_id: str) -> Optional[str]:
         """
         Returns HTML view of the graph with all its nodes and edges
+        :param workspace_id: ID of the Workspace
         :return:
         """
-        workspace = self.repository.load_by_id(self.active_workspace_id)
+        workspace = self.repository.load_by_id(workspace_id)
         if workspace is None:
             return None
 
         return workspace.render()
 
 
-    def set_active_search(self, query: str):
+    def set_search(self, query: str, workspace_id: str):
         """
         Sets search to active workspace
+        :param query: Query for the search
+        :param workspace_id: ID of the Workspace
         :return:
         """
-        active_workspace = self.repository.load_by_id(self.active_workspace_id)
-        if active_workspace:
-            active_workspace.set_search(query)
-            self.repository.update(active_workspace)
+        workspace = self.repository.load_by_id(workspace_id)
+        if workspace:
+            workspace.set_search(query)
+            self.repository.update(workspace)
 
 
-    def add_active_filter(self, query: str):
+    def add_filter(self, query: str, workspace_id: str):
         """
         Adds filter query to active workspace
         :param query: Should be string expression representing the filter (e.g. 'age > 35')
+        :param workspace_id: ID of the Workspace
         :return:
         """
-        active_workspace = self.repository.load_by_id(self.active_workspace_id)
-        if active_workspace:
-            active_workspace.add_filter(query)
-            self.repository.update(active_workspace)
+        workspace = self.repository.load_by_id(workspace_id)
+        if workspace:
+            workspace.add_filter(query)
+            self.repository.update(workspace)
 
 
-    def set_active_visualizer(self, visualizer_key: str) -> bool:
+    def set_visualizer(self, visualizer_key: str, workspace_id: str) -> bool:
         """
         Sets visualizer to active workspace
         :param visualizer_key: String name of the visualizer plugin
+        :param workspace_id: ID of the Workspace
         :return: True if set, otherwise False
         """
         plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
         if plugin is None:
             return False
 
-        active_workspace = self.repository.load_by_id(self.active_workspace_id)
-        if active_workspace is None:
+        workspace = self.repository.load_by_id(workspace_id)
+        if workspace is None:
             return False
 
-        active_workspace.set_visualizer(plugin)
-        self.repository.update(active_workspace)
+        workspace.set_visualizer(plugin)
+        self.repository.update(workspace)
         return True
 
 
-    def get_active_workspace(self) -> Optional[Workspace]:
+    def get_workspace(self, workspace_id: str) -> Optional[Workspace]:
         """
         Returns active workspace
+        :param workspace_id: ID of the Workspace
         :return:
         """
-        if self.active_workspace_id is None:
-            return None
-
-        return self.repository.load_by_id(self.active_workspace_id)
+        return self.repository.load_by_id(workspace_id)
 
     def get_all_workspaces_metadata(self) -> List[dict]:
         """
@@ -144,6 +119,6 @@ class WorkspaceManager:
         metadata = []
 
         for id, workspace in self.repository.load_all().items():
-            metadata.append({'id': id, 'name': workspace.name, "is_active": id == self.active_workspace_id})
+            metadata.append({'id': id, 'name': workspace.name})
 
         return metadata

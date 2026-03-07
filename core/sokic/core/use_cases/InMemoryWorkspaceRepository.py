@@ -11,7 +11,7 @@ class InMemoryWorkspaceRepository(WorkspaceRepository):
         self.workspaces: dict[str, Workspace] = {}
 
 
-    def save(self, workspace) -> bool:
+    def save(self, workspace: Workspace) -> bool:
         """
         Saves workspace to InMemory
         :param workspace:
@@ -23,7 +23,7 @@ class InMemoryWorkspaceRepository(WorkspaceRepository):
         self.workspaces[workspace.id] = workspace
         return True
 
-    def update(self, workspace) -> bool:
+    def update(self, workspace: Workspace) -> bool:
         """
         Updates workspace with new data
         :param workspace:

@@ -11,6 +11,15 @@ class WorkspaceRepository(ABC):
         pass
 
     @abstractmethod
+    def update(self, workspace):
+        """
+        Implements update method
+        :param workspace: Workspace object
+        :return:
+        """
+        pass
+
+    @abstractmethod
     def load_by_id(self, workspace_id: str):
         """
         Loads Workspace object by workspace_id

@@ -99,10 +99,10 @@ def workspace():
     manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
 
     id = manager.create_workspace('test', graph, 'yaml', 'block')
-    manager.switch_workspace_name('test')
 
-    #manager.set_active_visualizer('simple')
-    graph_html = manager.get_active_render()
+    manager.add_filter("born > 1995", id)
+    manager.set_visualizer('simple', id)
+    graph_html = manager.get_render(id)
 
     return render_template('main-view.html', plugin_html=graph_html)
 
