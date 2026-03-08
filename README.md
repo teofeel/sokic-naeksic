@@ -8,3 +8,8 @@ Install required plugins and components:
 ```powershell
 pip install ./api ./plugins/data_source_plugin_yaml ./plugins/block_visualizer ./plugins/simple_visualizer
 ```
+
+To ensure the Graph and Bird View render correctly you must include the global stylesheet in HTML head
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
