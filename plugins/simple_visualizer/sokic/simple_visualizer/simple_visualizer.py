@@ -36,18 +36,21 @@ class SimpleVisualizer(VisualizerPlugin):
         graph_data = self._graph_to_json(graph)
 
         return f"""
-        <div id="graph-viewport" style="border: 1px solid #ccc;"></div>
+        <div id="graph-viewport" style="width: 100%; height: 100%; position: absolute; inset: 0;"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script>
             (function() {{
                 const data = {graph_data};
-                const width = 800;
-                const height = 600;
                 const nodeRadius = 40;
+                
+                const container = document.getElementById("graph-viewport");
+                const width = container.clientWidth || 800;
+                const height = container.clientHeight || 600;
 
                 const svg = d3.select("#graph-viewport")
                     .append("svg")
-                    .attr("viewBox", [0, 0, width, height]);
+                    .attr("width", "100%")
+                    .attr("height", "100%");
 
                 // Arrow marker for directed edges
                 svg.append("defs").append("marker")

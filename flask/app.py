@@ -100,8 +100,8 @@ def workspace():
 
     id = manager.create_workspace('test', graph, 'yaml', 'block')
 
-    manager.add_filter("born > 1995", id)
-    manager.set_visualizer('simple', id)
+    # manager.add_filter("born > 1995", id)
+    # manager.set_visualizer('simple', id)
     graph_html = manager.get_render(id)
 
     return render_template('main-view.html', plugin_html=graph_html)

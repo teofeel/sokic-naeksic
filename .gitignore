@@ -13,6 +13,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 /plugins/simple_visualizer/build/
+/plugins/simple_visualizer/build
 /plugins/simple_visualizer/sokic_simple_visualizer.egg-info/
 **/__pycache__/
 /plugins/simple_visualizer/build/
