@@ -2,7 +2,7 @@ from sokic.api.services.DataSourcePlugin import DataSourcePlugin
 from sokic.api.services.Plugin import Plugin
 from sokic.api.services.VisualizerPlugin import VisualizerPlugin
 from importlib.metadata import entry_points
-from typing import Any, Union
+from typing import Any, Union, Optional, List
 from collections import defaultdict
 
 class PluginLoader:
@@ -46,3 +46,18 @@ class PluginLoader:
             plugin_name: str = plugin.name()
 
             self.plugins[plugin_type][plugin_name] = plugin
+
+    def get_all_available_plugins(self, type: str) -> List[str]:
+        """
+        Used to get all available plugins by type
+        :param type:
+        :return: Lisr of all available plugins by name
+        """
+        if type is None:
+            return []
+
+        plugin_dict = self.plugins.get(type, {})
+        if plugin_dict is None:
+            return []
+
+        return list(plugin_dict.keys())

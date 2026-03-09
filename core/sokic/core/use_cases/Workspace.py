@@ -59,9 +59,29 @@ class Workspace:
             return False
 
         self.filter_queries.append(query)
-        self._rebuild_graph()
+        self.rebuild_graph()
 
         return True
+
+    def set_filters(self, filters: List[str]) -> bool:
+        """
+        Sets filters for this workspace
+        :param filters: List of filters
+        :return: True if the filters were changed, False otherwise
+        """
+        if not filters:
+            return False
+
+        changed = False
+        for query in filters:
+            if query not in self.filter_queries:
+                self.filter_queries.append(query)
+                changed = True
+
+        if changed:
+            self.rebuild_graph()
+
+        return changed
 
 
     def set_search(self, query: str):
@@ -71,7 +91,7 @@ class Workspace:
         :return:
         """
         self.search_query = query
-        self._rebuild_graph()
+        self.rebuild_graph()
 
 
     def render(self) -> Optional[str]:
@@ -85,7 +105,7 @@ class Workspace:
         return self.visualizer.visualize(self.active_graph)
 
 
-    def _rebuild_graph(self):
+    def rebuild_graph(self):
         """
         Used to rebuild the graph, actually uses filter and search query to create new active graph
         :return:
@@ -99,3 +119,26 @@ class Workspace:
             temp_graph = self.search_service.search_subgraph(temp_graph, self.search_query)
 
         self.active_graph = temp_graph
+
+
+    def set_graph(self, graph: Graph):
+        """
+        Set new source graph
+        :param graph: Generated graph
+        :return:
+        """
+        self.source_graph = graph
+
+    def get_filters(self) -> List[str]:
+        """
+        Get all active graph filters
+        :return: List of all active graph filters
+        """
+        return self.filter_queries
+
+    def get_search(self) -> str:
+        """
+        Get active graph search
+        :return: Active search
+        """
+        return self.search_query
