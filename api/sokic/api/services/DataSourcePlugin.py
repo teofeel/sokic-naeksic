@@ -6,10 +6,10 @@ import abc
 class DataSourcePlugin(Plugin):
 
     @abc.abstractmethod
-    def convert_to_graph(self, filepath: str) -> Graph:
+    def convert_to_graph(self, stream: str) -> Graph:
         """
         Convert from data source (JSON, YAML, ...) to graph model
-        :param filepath:
+        :param stream:
         :return: Graph model
         """
         pass

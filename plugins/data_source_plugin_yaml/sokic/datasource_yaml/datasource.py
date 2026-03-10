@@ -37,7 +37,7 @@ class YamlDataSource(DataSourcePlugin):
         return "datasource"
 
 
-    def convert_to_graph(self, filepath: str) -> Graph | None:
+    def convert_to_graph(self, stream: str) -> Graph | None:
         """
         Method to convert yaml file to graph
         :param filepath: Full path to yaml file
@@ -45,8 +45,7 @@ class YamlDataSource(DataSourcePlugin):
         """
         try:
             # update this not to read whole file, instead only file object
-            with open(filepath, "r", encoding="utf-8") as stream:
-                data = yaml.safe_load(stream)
+            data = yaml.safe_load(stream)
 
             g = Graph()
 

@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 current_dir = Path(__file__).resolve().parent
 template_path = current_dir.parent / 'core' / 'templates'
-app = Flask(__name__, template_folder=str(template_path))
+app = Flask(__name__)
 
 
 # @app.route("/")
@@ -32,38 +32,22 @@ app = Flask(__name__, template_folder=str(template_path))
 
 @app.route('/')
 def test_visualizer():
-
-    yaml_plugin = loader.plugins['datasource']['json']
-    print(yaml_plugin)
-
-    graph_model = yaml_plugin.convert_to_graph('test.json')
-    print("graf: ")
-    print(graph_model.edges)
-    print(graph_model.nodes)
-
-    visualizer = loader.plugins['visualizer']['block']
+    #yaml_plugin = loader.plugins['datasource']['json']
+    #print(yaml_plugin)
+#
+    #graph_model = yaml_plugin.convert_to_graph('test.json')
+    #print("graf: ")
+    #print(graph_model.edges)
+    #print(graph_model.nodes)
+#
+    #visualizer = loader.plugins['visualizer']['block']
     #visualizer = loader.plugins['visualizer']['simple']
-    graph_html = visualizer.visualize(graph_model)
-    # print(graph_html)
-    graph_data = {
-        "nodes": [{"id": node_id, **node_obj.data}
-                  for node_id, node_obj in graph_model.nodes.items()],
-        "links": [{"source": edge_obj.source, "target": edge_obj.target}
-                  for edge_obj in graph_model.edges.values()]
-    }
+    #graph_html = visualizer.visualize(graph_model)
+    #print(graph_html)
 
-    return render_template('main-view.html', plugin_html=graph_html, graph_data_json=json.dumps(graph_data))
+    return render_template('header.html')
 
-    #return render_template_string("""
-    #    <!DOCTYPE html>
-    #    <html>
-    #    <head><title>Graph Test</title></head>
-    #    <body>
-    #        <h1>Graph Visualization Test</h1>
-    #        {{ graph_content | safe }}
-    #    </body>
-    #    </html>
-    #""", graph_content=graph_html)
+
 @app.route('/test-search')
 def test_filter_and_search():
     yaml_plugin = loader.plugins['datasource']['yaml']
@@ -121,13 +105,17 @@ def workspace():
    
     return render_template('main-view.html', plugin_html=graph_html)
 
-@app.route("/available")
+@app.route("/plugins/available")
 def available():
-    available_plugins = loader.get_all_available_plugins("datasource")
+    type = request.args.get('type')
+    if not type:
+        return []
+
+    available_plugins = loader.get_all_available_plugins(type)
     return available_plugins
 
-@app.route('/load-file/<workspace_id>', methods=['POST'])
-def load_file(workspace_id):
+@app.route('/workspace/data/<workspace_id>', methods=['PUT'])
+def change_data(workspace_id):
     try:
         if workspace_id is None: raise ValueError('Workspace id is required')
 
@@ -148,6 +136,23 @@ def load_file(workspace_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/workspace/visualizer/<workspace_id>', methods=['PUT'])
+def change_visualizer(workspace_id):
+    try:
+        if workspace_id is None: raise ValueError('Workspace id is required')
+        visualizer_key = request.form.get('visualizer')
+
+        success = workspace_manager.set_visualizer(workspace_id, visualizer_key)
+
+        if not success:
+            raise Exception('Some issues occurred....')
+
+        return jsonify({'success': True}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route("/workspace")
 def get_workspaces():
@@ -206,7 +211,4 @@ def get_workspace_metadata(workspace_id):
 
 if __name__ == "__main__":
     create_default_workspace(workspace_manager)
-    id = workspace_manager.create_workspace('Workspace 1', None, 'yaml', 'block')
-    print(id)
-
     app.run(debug=True)
