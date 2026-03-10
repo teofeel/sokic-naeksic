@@ -1,0 +1,2 @@
+pyjson
+sokic-api

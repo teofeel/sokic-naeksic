@@ -1,14 +1,10 @@
 from .edge import Edge
 from .node import Node
-from .graph_direction import GraphDirection
-from .graph_cycle import GraphCycle
 
 class Graph:
-    def __init__(self, direction: GraphDirection, cycle_policy: GraphCycle):
+    def __init__(self):
         self.nodes = {}
         self.edges = {}
-        self.direction = direction
-        self.cycle_policy = cycle_policy
 
     # Add Edge function
     # Params: edge: Edge
@@ -19,14 +15,6 @@ class Graph:
         
         if not (edge.source in self.nodes
                 and edge.target in self.nodes):
-            return False
-
-        if (self.direction == GraphDirection.UNDIRECTED
-                and self.__is_already_connected(edge.source, edge.target)):
-            return False
-
-        if (self.cycle_policy == GraphCycle.ACYCLIC
-                and self.__would_create_cycle(edge.source, edge.target)):
             return False
 
         self.nodes[edge.source].out_edges.append(edge)
@@ -120,57 +108,17 @@ class Graph:
     def __getitem__(self, key) -> Edge | Node | None:
         return self.nodes.get(key) or self.edges.get(key)
 
-
-    # checks if adding edge between start and end would create cycle
-    # Params: start_node: Node, end_node: Node
-    # Returns: bool
-    def __would_create_cycle(self, start_node: Node, end_node: Node) -> bool:
-        if self.direction == GraphDirection.UNDIRECTED:
-            return self.__has_path(start_node, end_node, set())
-        else:
-            return self.__has_path(end_node, start_node, set())
-
-    # checks if there is already connection between start and end node
-    # Params: start_node: Node, end_node: Node
-    # Returns: bool
-    def __is_already_connected(self, start_node: Node, end_node: Node) -> bool:
-        source = self.nodes.get(start_node)
-        if not source:
-            return False
-
-        for edge in source.out_edges:
-            if edge.target == end_node or edge.source == end_node:
+    def is_directed(self) -> bool:
+        """
+        Checks if the graph is directed or not
+        True if it is directed
+        False if it is undirected
+        """
+        for edge in self.edges.values():
+            reverse_exists = any(
+                e.source == edge.target and e.target == edge.source
+                for e in self.nodes[edge.target].out_edges
+            )
+            if not reverse_exists:
                 return True
-
-        for edge in source.in_edges:
-            if edge.target == end_node or edge.source == end_node:
-                return True
-
-        return False
-
-    # using dfs we traverse through graph
-    # Params: start_node: Node, end_node: Node, visited: set, last_edge: id (Default None)
-    # Returns: bool
-    def __has_path(self, start_node: Node, end_node: Node, visited: set, last_edge=None) -> bool:
-        if start_node == end_node:
-            return True
-
-        if start_node not in visited:
-            visited.add(start_node)
-
-        node = self.nodes[start_node]
-        edges_to_check = list(node.out_edges)
-
-        if self.direction == GraphDirection.UNDIRECTED:
-            edges_to_check.extend(node.in_edges)
-
-        for edge in edges_to_check:
-            if edge.id == last_edge:
-                continue
-
-            neighbor_id = edge.target if edge.source == start_node else edge.source
-
-            if neighbor_id not in visited:
-                if self.__has_path(neighbor_id, end_node, visited, edge.id):
-                    return True
         return False
