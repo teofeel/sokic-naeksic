@@ -1,0 +1,2 @@
+[sokic.plugin]
+json_datasource = sokic.datasource_json.datasource:JsonDataSource
