@@ -6,10 +6,6 @@ from typing import Optional, List
 import uuid
 
 class Workspace:
-    """
-        Workspace is implemented as a Context class of Strategy Pattern
-    """
-
     def __init__(self, name: str, graph: Graph):
         """
         :param name: Name of the workspace

@@ -6,9 +6,6 @@ from typing import Any, Union, Optional, List
 from collections import defaultdict
 
 class PluginLoader:
-    """
-    Using Registry Pattern to register all available plugins
-    """
     def __init__(self):
         self.plugins: dict[str, dict[str, Union[DataSourcePlugin, VisualizerPlugin]]] = defaultdict(dict)
 
@@ -50,7 +47,7 @@ class PluginLoader:
     def get_all_available_plugins(self, type: str) -> List[str]:
         """
         Used to get all available plugins by type
-        :param type:
+        :param type: Type of the plugin, e.g. datasource, visualizer
         :return: Lisr of all available plugins by name
         """
         if type is None:

@@ -7,10 +7,6 @@ from core.sokic.core.use_cases.Workspace import Workspace
 from typing import List, Optional
 
 class WorkspaceManager:
-    """
-    Implements Facade pattern
-    """
-
     def __init__(self, plugin_loader: PluginLoader, repository: WorkspaceRepository):
         """
         :param plugin_loader: PluginLoader object used to load plugins
@@ -160,7 +156,7 @@ class WorkspaceManager:
         if not workspace:
             return False
 
-        success = workspace.set_filter(filters)
+        success = workspace.set_filters(filters)
         if success:
             self.repository.update(workspace)
 
