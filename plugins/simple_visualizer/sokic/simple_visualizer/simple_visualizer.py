@@ -1,35 +1,32 @@
 from typing import Dict, Any
-from sokic.api.models.edge import Edge
+import json
+
 from sokic.api.models.graph import Graph
 from sokic.api.models.node import Node
+from sokic.api.models.edge import Edge
 from sokic.api.services.VisualizerPlugin import VisualizerPlugin
 
 
-class BlockVisualizer(VisualizerPlugin):
-    """
-    Visualizer that passes all GraphElement data to D3.js to be
-    rendered as blocks with all the neccessary info
-    """
+class SimpleVisualizer(VisualizerPlugin):
 
     def name(self) -> str:
-        return "block"
+        return "simple"
 
     def type(self) -> str:
         return "visualizer"
 
     def _get_node_data(self, node: Node) -> Dict[str, Any]:
-        return {"id": node.id, **node.data}
+        return {
+            "id": node.id
+        }
 
     def _get_edge_data(self, edge: Edge) -> Dict[str, Any]:
         return {
-            "id": edge.id,
             "source": edge.source,
-            "target": edge.target,
-            **edge.data
+            "target": edge.target
         }
 
     def visualize(self, graph: Graph) -> str:
-
         """
         Generates visual representation of Graph object as HTML string
         :param graph:
@@ -44,6 +41,7 @@ class BlockVisualizer(VisualizerPlugin):
         <script>
             (function() {{
                 const data = {graph_data};
+                const nodeRadius = 40;
                 
                 const container = document.getElementById("graph-viewport");
                 const width = container.clientWidth || 800;
@@ -53,6 +51,19 @@ class BlockVisualizer(VisualizerPlugin):
                     .append("svg")
                     .attr("width", "100%")
                     .attr("height", "100%");
+
+                // Arrow marker for directed edges
+                svg.append("defs").append("marker")
+                    .attr("id", "arrow")
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", nodeRadius + 10)
+                    .attr("refY", 0)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M0,-5L10,0L0,5")
+                    .attr("fill", "#999");
 
                 const simulation = d3.forceSimulation(data.nodes)
                     .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
@@ -64,7 +75,8 @@ class BlockVisualizer(VisualizerPlugin):
                     .data(data.links)
                     .join("line")
                     .attr("stroke", "#999")
-                    .attr("stroke-width", 2);
+                    .attr("stroke-width", 2)
+                    .attr("marker-end", "url(#arrow)");
 
                 const node = svg.append("g")
                     .selectAll("g")
@@ -81,46 +93,21 @@ class BlockVisualizer(VisualizerPlugin):
                             d.fx = null; d.fy = null;
                         }}));
 
-                const textBlock = node.append("text")
+                // Circle background
+                node.append("circle")
+                    .attr("r", nodeRadius)
+                    .attr("fill", "#fff")
+                    .attr("stroke", "#333")
+                    .attr("stroke-width", 2);
+
+                // ID label centered in circle
+                node.append("text")
                     .attr("text-anchor", "middle")
+                    .attr("dominant-baseline", "middle")
                     .attr("font-family", "sans-serif")
-                    .attr("font-size", "10px");
-
-                textBlock.append("tspan")
-                    .attr("x", 0)
-                    .attr("dy", "0")
-                    .style("font-weight", "bold")
-                    .text(d => `ID: ${{d.id}}`);
-
-                textBlock.each(function(d) {{
-                    const el = d3.select(this);
-                    const keys = Object.keys(d).filter(k => 
-                        !['id', 'x', 'y', 'vx', 'vy', 'index', 'fx', 'fy'].includes(k)
-                    );
-
-                    keys.forEach(key => {{
-                        el.append("tspan")
-                            .attr("x", 0)
-                            .attr("dy", "1.2em")
-                            .text(`${{key}}: ${{d[key]}}`);
-                    }});
-                }});
-
-                node.insert("rect", "text")
-                    .each(function(d) {{
-                        const g = d3.select(this.parentNode);
-                        const bbox = g.select("text").node().getBBox();
-                        const padding = 10;
-
-                        d3.select(this)
-                            .attr("x", bbox.x - padding)
-                            .attr("y", bbox.y - padding)
-                            .attr("width", bbox.width + (padding * 2))
-                            .attr("height", bbox.height + (padding * 2))
-                            .attr("rx", 5)
-                            .attr("fill", "#fff")
-                            .attr("stroke", "#333");
-                    }});
+                    .attr("font-size", "11px")
+                    .attr("font-weight", "bold")
+                    .text(d => d.id);
 
                 simulation.on("tick", () => {{
                     link.attr("x1", d => d.source.x)
