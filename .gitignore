@@ -67,3 +67,9 @@ plugins/simple_visualizer/sokic_simple_visualizer.egg-info/SOURCES.txt
 plugins/simple_visualizer/sokic_simple_visualizer.egg-info/top_level.txt
 core/sokic/__pycache__/__init__.cpython-311.pyc
 /plugins/simple_visualizer/build/
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/dependency_links.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/entry_points.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/requires.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/SOURCES.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/top_level.txt
+plugins/data_source_plugin_json/build/lib/sokic/datasource_json/datasource.py

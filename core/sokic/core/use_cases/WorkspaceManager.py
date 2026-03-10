@@ -81,14 +81,28 @@ class WorkspaceManager:
             self.repository.update(workspace)
 
 
-    def set_visualizer(self, visualizer_key: str, workspace_id: str) -> bool:
+    def set_visualizer(self, workspace_id: str, visualizer_key: str) -> bool:
         """
         Sets visualizer to active workspace
         :param visualizer_key: String name of the visualizer plugin
         :param workspace_id: ID of the Workspace
         :return: True if set, otherwise False
         """
-        plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
+        return self._set_workspace_plugin(workspace_id, 'visualizer', visualizer_key)
+
+    def set_datasource(self, workspace_id: str, datasource_key: str):
+        """
+        Sets datasource to active workspace
+        :param workspace_id: ID of the Workspace
+        :param datasource_key: String name of the datasource plugin
+        :return: True if set, otherwise False
+        """
+        return self._set_workspace_plugin(workspace_id, 'datasource', datasource_key)
+
+    def _set_workspace_plugin(self, workspace_id: str, plugin_type: str, plugin_key: str) -> bool:
+        plugin_category = self.plugin_loader.plugins.get(plugin_type, {})
+        plugin = plugin_category.get(plugin_key)
+
         if plugin is None:
             return False
 
@@ -96,10 +110,13 @@ class WorkspaceManager:
         if workspace is None:
             return False
 
-        workspace.set_visualizer(plugin)
+        if plugin_type == 'visualizer':
+            workspace.set_visualizer(plugin)
+        elif plugin_type == 'datasource':
+            workspace.set_datasource(plugin)
+
         self.repository.update(workspace)
         return True
-
 
     def get_workspace(self, workspace_id: str) -> Optional[Workspace]:
         """

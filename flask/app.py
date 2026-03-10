@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, render_template
+from flask import Flask, render_template_string, render_template, request, jsonify
 
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
@@ -7,6 +7,8 @@ from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, Filt
 
 loader = PluginLoader()
 loader.load_all()
+workspace_manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
+
 search_service = SearchServiceImpl()
 filter_service = FilterServiceImpl()
 
@@ -26,10 +28,10 @@ app = Flask(__name__, template_folder=str(template_path))
 @app.route('/')
 def test_visualizer():
 
-    yaml_plugin = loader.plugins['datasource']['yaml']
+    yaml_plugin = loader.plugins['datasource']['json']
     print(yaml_plugin)
 
-    graph_model = yaml_plugin.convert_to_graph('test.yaml')
+    graph_model = yaml_plugin.convert_to_graph('test.json')
     print("graf: ")
     print(graph_model.edges)
     print(graph_model.nodes)
@@ -103,6 +105,7 @@ def workspace():
     # manager.add_filter("born > 1995", id)
     # manager.set_visualizer('simple', id)
     #manager.set_filters(id, ["born > 1995"])
+    manager.set_visualizer(id, 'block')
     graph_html = manager.get_render(id)
    
     return render_template('main-view.html', plugin_html=graph_html)
@@ -112,5 +115,44 @@ def available():
     available_plugins = loader.get_all_available_plugins("datasource")
     return available_plugins
 
+@app.route('/load-file', methods=['POST'])
+def load_file():
+    workspace_id = request.args.get('id')
+    
+    try:
+        if workspace_id is None: raise ValueError('Workspace id is required')
+
+        if 'data' not in request.files: raise ValueError('No data provided')
+
+        file = request.files['data']
+        filename = file.filename
+        extension = os.path.splitext(filename)[1].lower().lstrip('.')
+
+        available_plugins = loader.get_all_available_plugins("datasource")
+        if available_plugins is [] or extension not in available_plugins:
+            raise ValueError(f'No plugin available for .{extension}')
+
+        plugin_category = loader.plugins.get("datasource", {})
+        if not plugin_category:
+            raise Exception('There arent any datasource plugins registered')
+
+        plugin = plugin_category.get(extension)
+        graph = plugin.convert_to_graph(file.stream)
+
+        if workspace_manager.get_workspace(workspace_id) is None:
+            raise ValueError('Workspace not found')
+
+        workspace_manager.set_new_graph(workspace_id, graph)
+
+        return jsonify({'success': True}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == "__main__":
+    id = workspace_manager.create_workspace('test', None, 'yaml', 'block')
+    print(id)
     app.run(debug=True)
