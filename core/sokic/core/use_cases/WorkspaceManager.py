@@ -1,14 +1,12 @@
 from sokic.api.services.WorkspaceRepository import WorkspaceRepository
 from sokic.api.models import Graph
+
+from api.services import DataSourcePlugin
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 from core.sokic.core.use_cases.Workspace import Workspace
 from typing import List, Optional
 
 class WorkspaceManager:
-    """
-    Implements Facade pattern
-    """
-
     def __init__(self, plugin_loader: PluginLoader, repository: WorkspaceRepository):
         """
         :param plugin_loader: PluginLoader object used to load plugins
@@ -122,3 +120,68 @@ class WorkspaceManager:
             metadata.append({'id': id, 'name': workspace.name})
 
         return metadata
+
+
+    def set_new_graph(self, workspace_id: str, graph: Graph) -> bool:
+        """
+        Set new source graph for workspace
+        :param workspace_id: ID of the Workspace
+        :param graph: Generated graph
+        :return:
+        """
+        workspace = self.repository.load_by_id(workspace_id)
+        if not workspace:
+            return False
+
+        workspace.set_graph(graph)
+        self.repository.update(workspace)
+        return True
+
+    def delete_workspace(self, workspace_id: str) -> bool:
+        """
+        Delete workspace
+        :param workspace_id: ID of the Workspace
+        :return: True if deleted, otherwise False
+        """
+        return self.repository.remove(workspace_id)
+
+    def set_filters(self, workspace_id: str, filters: List[str]) -> bool:
+        """
+        Sets filters to active workspace
+        :param workspace_id: ID of the Workspace
+        :param filters: List of filters
+        :return:
+        """
+        workspace = self.repository.load_by_id(workspace_id)
+        if not workspace:
+            return False
+
+        success = workspace.set_filters(filters)
+        if success:
+            self.repository.update(workspace)
+
+        return success
+
+    def get_workspace_filters(self, workspace_id: str) -> List[str]:
+        """
+        Get active workspace filters
+        :param workspace_id: ID of the Workspace
+        :return: List of active filters
+        """
+        workspace = self.repository.load_by_id(workspace_id)
+        if not workspace:
+            return []
+
+        return workspace.get_filters()
+
+    def get_workspace_search(self, workspace_id: str) -> str:
+        """
+        Get active workspace search
+        :param workspace_id: ID of the Workspace
+        :return: Active search string
+        """
+        workspace = self.repository.load_by_id(workspace_id)
+        if not workspace:
+            return ""
+
+        return workspace.get_search()

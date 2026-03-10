@@ -4,9 +4,6 @@ from sokic.api.services.WorkspaceRepository import WorkspaceRepository
 from core.sokic.core.use_cases.Workspace import Workspace
 
 class InMemoryWorkspaceRepository(WorkspaceRepository):
-    """
-    Implements Repository pattern for Workspace using InMemory
-    """
     def __init__(self):
         self.workspaces: dict[str, Workspace] = {}
 

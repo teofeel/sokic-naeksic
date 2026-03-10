@@ -102,10 +102,15 @@ def workspace():
 
     # manager.add_filter("born > 1995", id)
     # manager.set_visualizer('simple', id)
+    #manager.set_filters(id, ["born > 1995"])
     graph_html = manager.get_render(id)
-
+   
     return render_template('main-view.html', plugin_html=graph_html)
 
+@app.route("/available")
+def available():
+    available_plugins = loader.get_all_available_plugins("datasource")
+    return available_plugins
 
 if __name__ == "__main__":
     app.run(debug=True)
