@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sokic-datasource-json"
+version = "0.1"
+description = "Component for loading and converting data"
+dependencies = [
+    "pyjson",
+    "sokic-api"
+]
+requires-python = ">=3.10"
+
+[project.entry-points."sokic.plugin"]
+json_datasource = "sokic.datasource_json.datasource:JsonDataSource"
+
+[tool.setuptools]
+provides = ["sokic"]

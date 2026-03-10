@@ -1,12 +1,19 @@
-from flask import Flask, render_template_string, render_template
+from flask import Flask, render_template_string, render_template, request, jsonify
 
+from api.models import Graph
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
+from core.sokic.core.use_cases.Workspace import Workspace
 from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
 import json
+from utils.workspace import create_default_workspace
+from utils.graph import generate_graph
+
 loader = PluginLoader()
 loader.load_all()
+workspace_manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
+
 search_service = SearchServiceImpl()
 filter_service = FilterServiceImpl()
 
@@ -26,10 +33,10 @@ app = Flask(__name__, template_folder=str(template_path))
 @app.route('/')
 def test_visualizer():
 
-    yaml_plugin = loader.plugins['datasource']['yaml']
+    yaml_plugin = loader.plugins['datasource']['json']
     print(yaml_plugin)
 
-    graph_model = yaml_plugin.convert_to_graph('test.yaml')
+    graph_model = yaml_plugin.convert_to_graph('test.json')
     print("graf: ")
     print(graph_model.edges)
     print(graph_model.nodes)
@@ -96,7 +103,7 @@ def test_filter_and_search():
     return results
 
 
-@app.route("/workspace")
+@app.route("/workspace-test")
 def workspace():
     plugin = loader.plugins['datasource']['yaml']
 
@@ -109,6 +116,7 @@ def workspace():
     # manager.add_filter("born > 1995", id)
     # manager.set_visualizer('simple', id)
     #manager.set_filters(id, ["born > 1995"])
+    manager.set_visualizer(id, 'block')
     graph_html = manager.get_render(id)
    
     return render_template('main-view.html', plugin_html=graph_html)
@@ -118,5 +126,87 @@ def available():
     available_plugins = loader.get_all_available_plugins("datasource")
     return available_plugins
 
+@app.route('/load-file/<workspace_id>', methods=['POST'])
+def load_file(workspace_id):
+    try:
+        if workspace_id is None: raise ValueError('Workspace id is required')
+
+        if 'data' not in request.files: raise ValueError('No data provided')
+
+        file = request.files['data']
+        graph, _ = generate_graph(loader, file)
+
+        if workspace_manager.get_workspace(workspace_id) is None:
+            raise ValueError('Workspace not found')
+
+        workspace_manager.set_new_graph(workspace_id, graph)
+
+        return jsonify({'success': True}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route("/workspace")
+def get_workspaces():
+    try:
+        workspaces = workspace_manager.get_all_workspaces_metadata()
+        if not workspaces:
+            create_default_workspace(workspace_manager)
+            return workspace_manager.get_all_workspaces_metadata()
+
+        return workspaces, 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route("/workspace", methods=['POST'])
+def create_workspace():
+    try:
+        if 'data' not in request.files: raise ValueError('No data provided')
+
+        file = request.files['data']
+        workspace_name = request.form.get('name')
+        visualizer_key = request.form.get('visualizer')
+
+        graph, extension = generate_graph(loader, file)
+
+        workspace_id = workspace_manager.create_workspace(workspace_name, graph, extension, visualizer_key)
+
+        return jsonify({'success': True, 'workspace_id': workspace_id}), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/workspace/<workspace_id>")
+def get_workspace_metadata(workspace_id):
+    try:
+        ws: Workspace = workspace_manager.get_workspace(workspace_id)
+        if not ws:
+            raise ValueError('Workspace not found')
+
+        res = {
+            'filters': ws.get_filters(),
+            'search': ws.get_search(),
+            'name': ws.name,
+            'id': ws.id,
+            'visualizer': ws.visualizer.name()
+        }
+
+        return res, 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == "__main__":
+    create_default_workspace(workspace_manager)
+    id = workspace_manager.create_workspace('Workspace 1', None, 'yaml', 'block')
+    print(id)
+
     app.run(debug=True)
