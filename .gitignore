@@ -73,3 +73,9 @@ plugins/data_source_plugin_json/sokic_datasource_json.egg-info/requires.txt
 plugins/data_source_plugin_json/sokic_datasource_json.egg-info/SOURCES.txt
 plugins/data_source_plugin_json/sokic_datasource_json.egg-info/top_level.txt
 plugins/data_source_plugin_json/build/lib/sokic/datasource_json/datasource.py
+plugins/data_source_plugin_json/build/lib/sokic/datasource_json/datasource.py
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/dependency_links.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/entry_points.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/requires.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/SOURCES.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/top_level.txt
