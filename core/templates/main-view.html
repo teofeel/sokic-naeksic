@@ -1,17 +1,11 @@
-{% block main_view %}
 <div class="main-view-container">
 
     <div id="main-view-wrapper">
-        {% include 'tree-view.html' %}
         <div id="graph-canvas-container">
             <div id="plugin-content-area">
                 {{ plugin_html | safe }}
             </div>
         </div>
-
-        <!--  TEMPORARILY INJECTED FOR TESTING PURPOSES. BIRD VIEW SHOULD NOT STAY HERE IN THE FINAL SOLUTION !! !!  ! !!!  !! !  !! ! !       -->
-        {% include 'bird-view.html' %}
-
         <div id="floating-tooltip" class="tooltip"></div>
     </div>
 
@@ -225,4 +219,3 @@
             });
         };
 </script>
-{% endblock %}

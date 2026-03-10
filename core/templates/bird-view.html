@@ -6,15 +6,15 @@
 <style>
     #bird-view-container {
         position: absolute;
-        bottom: 20px;
-        right: 20px;
+        bottom: 25px;
+        right: 25px;
         width: 220px;
         height: 160px;
         background: rgba(255, 255, 255, 0.95);
         border: 2px solid #444;
         border-radius: 6px;
         overflow: hidden;
-        pointer-events: none; /* Requirement: Not interactable */
+        pointer-events: none;
         box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         z-index: 1000;
     }
@@ -33,10 +33,28 @@
         left: 0;
         pointer-events: none;
         box-sizing: border-box;
+        transition: background-color 1s ease, border-color 1s ease;
     }
 </style>
 
 <script>
+
+    function startColorCycle() {
+        const viewport = document.getElementById("bird-view-viewport");
+
+        setInterval(() => {
+            const hue = Math.floor(Math.random() * 360);
+
+            const borderColor = `hsla(${hue}, 70%, 50%, 1)`;
+            const bgColor = `hsla(${hue}, 70%, 50%, 0.15)`;
+
+            viewport.style.borderColor = borderColor;
+            viewport.style.backgroundColor = bgColor;
+        }, 500);
+    }
+
+    startColorCycle();
+
     const BirdView = {
         config: {
             width: 220,
