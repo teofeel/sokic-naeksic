@@ -2,6 +2,7 @@
 <div class="main-view-container">
 
     <div id="main-view-wrapper">
+        {% include 'tree-view.html' %}
         <div id="graph-canvas-container">
             <div id="plugin-content-area">
                 {{ plugin_html | safe }}
@@ -86,7 +87,6 @@
             padding-right: 10px;
         }
 </style>
-
 <script>
 
         let zoomLayer = null;
@@ -96,12 +96,31 @@
             const svgElement = document.querySelector("#graph-viewport svg");
             if (svgElement && svgElement.children.length > 0) {
                 setupAdvancedFeatures(svgElement);
+                initTreeFromDom();
             } else {
                 setTimeout(waitForSvg, 100);
             }
         }
 
         waitForSvg();
+        function initTreeFromDom() {
+            const nodes = [];
+            const links = [];
+
+            zoomLayer.selectAll("g").each(function(d) {
+                if (d && d.id !== undefined) nodes.push(d);
+            });
+
+            zoomLayer.selectAll("line, path").each(function(d) {
+                if (d && d.source && d.target) links.push(d);
+            });
+
+            if (nodes.length > 0) {
+                TreeView.init({ nodes, links });
+            } else {
+                setTimeout(initTreeFromDom, 200);
+            }
+        }
 
         function showTooltip(d, tooltip,element){
                 if (!d) return;
@@ -182,6 +201,28 @@
             }).on("mouseleave", function() {
                 removeTooltip(tooltip, this)
             });
+            nodes.on("click", function(event, d) {
+                if (d && d.id !== undefined) {
+                    TreeView.selectNode(d.id);
+                }
+            });
         }
+                window.onTreeNodeSelected = function(nodeId) {
+            zoomLayer.selectAll("g").each(function(d) {
+                if (d && d.id === nodeId) {
+                    const el = d3.select(this);
+                    el.select("circle, rect")
+                        .transition().duration(300)
+                        .style("stroke", "#e5c07b")
+                        .style("stroke-width", "3px");
+                    setTimeout(() => {
+                        el.select("circle, rect")
+                            .transition().duration(300)
+                            .style("stroke", "#333")
+                            .style("stroke-width", "1px");
+                    }, 1500);
+                }
+            });
+        };
 </script>
 {% endblock %}

@@ -1,11 +1,12 @@
 from flask import Flask, render_template_string, render_template, request, jsonify
 
-from api.models import Graph
+#from api.models import Graph
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 from core.sokic.core.use_cases.Workspace import Workspace
 from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
+import json
 from utils.workspace import create_default_workspace
 from utils.graph import generate_graph
 
@@ -31,7 +32,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def test_visualizer():
-
     #yaml_plugin = loader.plugins['datasource']['json']
     #print(yaml_plugin)
 #
@@ -47,16 +47,7 @@ def test_visualizer():
 
     return render_template('header.html')
 
-    #return render_template_string("""
-    #    <!DOCTYPE html>
-    #    <html>
-    #    <head><title>Graph Test</title></head>
-    #    <body>
-    #        <h1>Graph Visualization Test</h1>
-    #        {{ graph_content | safe }}
-    #    </body>
-    #    </html>
-    #""", graph_content=graph_html)
+
 @app.route('/test-search')
 def test_filter_and_search():
     yaml_plugin = loader.plugins['datasource']['yaml']
