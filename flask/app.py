@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, render_template, request, jsonify
 
-from api.models import Graph
+#from api.models import Graph
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
