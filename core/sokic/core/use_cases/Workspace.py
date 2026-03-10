@@ -124,6 +124,7 @@ class Workspace:
         :return:
         """
         self.source_graph = graph
+        self.rebuild_graph()
 
     def get_filters(self) -> List[str]:
         """
