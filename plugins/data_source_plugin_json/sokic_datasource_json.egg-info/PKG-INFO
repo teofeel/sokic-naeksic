@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: sokic-datasource-json
+Version: 0.1
+Summary: Component for loading and converting data
+Provides: sokic
+Requires-Python: >=3.10
+Requires-Dist: pyjson
+Requires-Dist: sokic-api

@@ -1,16 +1,17 @@
 import collections
 from collections import deque
+from itertools import cycle
 
+from sokic.api.models import Graph
 from sokic.api.services.DataSourcePlugin import DataSourcePlugin
 from sokic.api.models.graph import Graph
 from sokic.api.models.graph_direction import GraphDirection
 from sokic.api.models.graph_cycle import GraphCycle
 from sokic.api.models.node import Node
 from sokic.api.models.edge import Edge
-import yaml
+import json
 
-
-class YamlDataSource(DataSourcePlugin):
+class JsonDataSource(DataSourcePlugin):
     def __init__(self, config: dict[str, str] | None = None):
         """
         :param config: Dictionary of configuration parameters,
@@ -29,23 +30,10 @@ class YamlDataSource(DataSourcePlugin):
             self.config = default_config
 
 
-    def name(self) -> str:
-        return "yaml"
-
-
-    def type(self) -> str:
-        return "datasource"
-
-
     def convert_to_graph(self, filepath: str) -> Graph | None:
-        """
-        Method to convert yaml file to graph
-        :param filepath: Full path to yaml file
-        :return:
-        """
         try:
-            with open(filepath, "r", encoding="utf-8") as stream:
-                data = yaml.safe_load(stream)
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
 
             g = Graph()
 
@@ -59,21 +47,10 @@ class YamlDataSource(DataSourcePlugin):
 
         except FileNotFoundError:
             print("File not found")
-        except yaml.YAMLError as exc:
-            print(exc)
+        except json.JSONDecodeError as e:
+            print(e)
 
-
-    def __process(self, g: Graph, data: dict, id_attr="@id", ref_attr="@ref", child_attr="children") -> None:
-        """
-        Recursively process the data
-        :param g:
-        :param data:
-        :param parent_id:
-        :param id_attr:
-        :param ref_attr:
-        :param child_attr:
-        :return:
-        """
+    def __process(self, g: Graph, data: dict, id_attr: str, ref_attr: str, child_attr: str):
         queue = collections.deque()
 
         if isinstance(data, list):
@@ -83,10 +60,10 @@ class YamlDataSource(DataSourcePlugin):
             queue.append((data, None))
 
         while queue:
-            current_data, parent_id = queue.popleft()
+            current, parent_id = queue.popleft()
 
-            node_id = current_data.get(id_attr)
-            ref_id = current_data.get(ref_attr)
+            node_id = current.get(id_attr)
+            ref_id = current.get(ref_attr)
             actual_id = node_id or ref_id
 
             if not actual_id:
@@ -94,17 +71,22 @@ class YamlDataSource(DataSourcePlugin):
 
             if actual_id not in g.nodes:
                 node_data = {
-                    key: val for key,val in current_data.items() if key not in [id_attr, ref_attr, child_attr]
+                    key: value for key, value in current.items() if key not in [id_attr, ref_attr, child_attr]
                 }
-
                 g.add_node(Node(actual_id, **node_data))
 
             if parent_id:
                 edge_id = f'{parent_id}->{actual_id}'
                 g.add_edge(Edge(edge_id, parent_id, actual_id))
 
-            children = current_data.get(child_attr)
+            children = current.get(child_attr)
 
             if isinstance(children, list):
                 for child in children:
                     queue.append((child, actual_id))
+
+    def name(self) -> str:
+        return "json"
+
+    def type(self) -> str:
+        return "datasource"
