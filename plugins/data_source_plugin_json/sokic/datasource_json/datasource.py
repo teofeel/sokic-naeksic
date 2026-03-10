@@ -30,10 +30,10 @@ class JsonDataSource(DataSourcePlugin):
             self.config = default_config
 
 
-    def convert_to_graph(self, filepath: str) -> Graph | None:
+    def convert_to_graph(self, stream: str) -> Graph | None:
         try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                data = json.load(f)
+
+            data = json.load(stream)
 
             g = Graph()
 

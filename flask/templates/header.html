@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Graph Workspace</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap');
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg: #f0f4f8;
+        --header-bg: #dce6f0;
+        --header-item-bg: white;
+        --border: #a8bdd4;
+        --modal-bg: #b8cfe0;
+        --btn-dark: #1a2535;
+        --btn-dark-hover: #2d3f57;
+        --text: #1a2535;
+        --text-muted: #4a6280;
+        --input-bg: #ffffff;
+        --cli-bg: #c8d8e8;
+        --cli-term: #1a2535;
+        --accent: #3a6ea5;
+        --shadow: 0 4px 24px rgba(30,50,80,0.13);
+        --radius: 8px;
+      }
+
+      body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 3px solid var(--btn-dark);
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: var(--header-bg);
+        border-bottom: 2px solid var(--border);
+        flex-shrink: 0;
+        z-index: 10;
+      }
+
+      .header-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+      .header-right { display: flex; align-items: center; gap: 10px; }
+
+      .load-graph-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--header-item-bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 6px 12px;
+      }
+
+      .load-graph-group span {
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--text);
+        white-space: nowrap;
+      }
+
+      .btn-file {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: 5px;
+        padding: 4px 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 12px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .btn-file:hover { background: #d0dce8; border-color: var(--accent); }
+
+      .select-styled {
+        background: var(--header-item-bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 7px 14px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 30px;
+        transition: border-color 0.15s;
+      }
+      .select-styled:hover, .select-styled:focus { border-color: var(--accent); outline: none; }
+
+      .btn-icon {
+        background: var(--header-item-bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        width: 38px;
+        height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        transition: background 0.15s, border-color 0.15s, transform 0.1s;
+        user-select: none;
+      }
+      .btn-icon:hover { background: #d0dce8; border-color: var(--accent); transform: scale(1.06); }
+      .btn-icon:active { transform: scale(0.97); }
+      .btn-icon svg { width: 16px; height: 16px; }
+
+      .workspace-group {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .workspace-select {
+        background: var(--header-bg);
+        border: none;
+        border-right: 1.5px solid var(--border);
+        padding: 7px 28px 7px 12px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-color: var(--header-item-bg);
+        min-width: 120px;
+      }
+      .workspace-select:focus { outline: none; }
+
+      .btn-plus {
+        background: var(--header-item-bg);
+        border: none;
+        width: 36px;
+        height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--text);
+        font-weight: 400;
+        line-height: 1;
+        transition: background 0.15s, color 0.15s;
+        user-select: none;
+      }
+      .btn-plus:hover { background: #d0dce8; color: var(--accent); }
+
+      .canvas {
+        flex: 1;
+        background: #f8fafc;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(20,36,56,0.18);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.18s ease;
+      }
+      .overlay.active { display: flex; }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes slideUp { from { transform: translateY(18px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+      .modal {
+        background: var(--modal-bg);
+        border-radius: 10px;
+        padding: 28px 32px 24px;
+        width: 340px;
+        position: relative;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.22s ease;
+        border: 1.5px solid rgba(255,255,255,0.4);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--text-muted);
+        line-height: 1;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: color 0.12s, background 0.12s;
+      }
+      .modal-close:hover { color: var(--text); background: rgba(0,0,0,0.08); }
+
+      .modal label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 7px;
+      }
+
+      .modal-field { margin-bottom: 16px; }
+
+      .modal input[type="text"] {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: 6px;
+        background: var(--input-bg);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text);
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      .modal input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(58,110,165,0.12);
+      }
+
+      .modal-file-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .modal-file-row span { font-size: 14px; font-weight: 500; color: var(--text); }
+      .modal-file-row .btn-file { font-size: 13px; padding: 5px 14px; }
+
+      .modal select {
+        width: 100%;
+        padding: 9px 32px 9px 12px;
+        border: 1.5px solid var(--border);
+        border-radius: 6px;
+        background: var(--input-bg);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text);
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-color: var(--input-bg);
+        cursor: pointer;
+        transition: border-color 0.15s;
+      }
+      .modal select:focus { outline: none; border-color: var(--accent); }
+
+      .modal-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn-dark {
+        background: var(--btn-dark);
+        color: #fff;
+        border: none;
+        border-radius: 7px;
+        padding: 11px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        letter-spacing: 0.01em;
+      }
+      .btn-dark:hover { background: var(--btn-dark-hover); transform: translateY(-1px); }
+      .btn-dark:active { transform: translateY(0); }
+      .btn-dark.secondary { background: #2d3f57; }
+      .btn-dark.secondary:hover { background: #3a5070; }
+
+      .cli-panel {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: var(--cli-bg);
+        border-top: 2px solid var(--border);
+        z-index: 200;
+        transform: translateY(100%);
+        transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+        display: flex;
+        flex-direction: column;
+      }
+      .cli-panel.open { transform: translateY(0); }
+
+      .cli-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 16px;
+        border-bottom: 1.5px solid var(--border);
+        background: var(--cli-bg);
+        flex-shrink: 0;
+      }
+
+      .cli-header-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+      }
+
+      .cli-close {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: var(--text-muted);
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: color 0.12s, background 0.12s;
+      }
+      .cli-close:hover { color: var(--text); background: rgba(0,0,0,0.08); }
+
+      .cli-body {
+        background: #1a2535;
+        min-height: 80px;
+        padding: 12px 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+        max-height: 220px;
+      }
+
+      .cli-line {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #a8c8e8;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+      .cli-line.output { color: #7ec8a0; }
+      .cli-line.error { color: #e07070; }
+
+      .cli-input-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px 12px;
+        background: #1a2535;
+      }
+
+      .cli-prompt {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #6aa0d0;
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      .cli-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #e8f0f8;
+        caret-color: #6aa0d0;
+      }
+      .cli-input::placeholder { color: #3a5070; }
+    </style>
+
+  </head>
+  
+  <body>
+
+    <header>
+      <div class="header-left">
+        <div class="load-graph-group">
+          <span>Load Graph</span>
+          <button class="btn-file" onclick="document.getElementById('headerFile').click()">Choose file</button>
+          <input type="file" id="headerFile" style="display:none" onchange="handleFileChange(this)"/>
+        </div>
+
+        <select class="select-styled" onchange="updateVisualizer(this.value)">
+          <option value="">Loading styles...</option>
+        </select>
+      </div>
+
+      <div class="header-right">
+        <button class="btn-icon" title="Open CLI" onclick="toggleCLI()">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 7 7 11 3 15"/>
+            <line x1="10" y1="15" x2="17" y2="15"/>
+          </svg>
+        </button>
+
+        <div class="workspace-group">
+          <select class="workspace-select" id="workspaceSelect">
+            <option>Loading workspaces...</option>
+          </select>
+          <button class="btn-plus" title="New workspace" onclick="openModal()">+</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="canvas"></div>
+
+    <div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+
+        <div class="modal-field">
+          <label for="wsName">Workspace name:</label>
+          <input type="text" id="wsName" placeholder="e.g. Workspace 2" autocomplete="off" />
+        </div>
+
+        <div class="modal-field">
+          <div class="modal-file-row">
+            <span>Load Graph</span>
+            <button class="btn-file" onclick="document.getElementById('modalFile').click()">Choose File</button>
+            <input type="file" id="modalFile" style="display:none" />
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <select id="modalVisualizer">
+            <option value="">Loading styles...</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-dark" onclick="createWorkspace()">Create</button>
+          <button class="btn-dark secondary" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cli-panel" id="cliPanel">
+      <div class="cli-header">
+        <span class="cli-header-title">Welcome to CLI</span>
+        <button class="cli-close" onclick="toggleCLI()" aria-label="Close CLI">&times;</button>
+      </div>
+      <div class="cli-body" id="cliBody">
+        <div class="cli-line">Graph Workspace CLI v1.0.0</div>
+        <div class="cli-line">Type <span style="color:#f0c060">help</span> for available commands.</div>
+      </div>
+      <div class="cli-input-row">
+        <span class="cli-prompt">&gt;&gt;&gt;</span>
+        <input
+          class="cli-input"
+          id="cliInput"
+          type="text"
+          placeholder="Enter command..."
+          onkeydown="handleCLI(event)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+    </div>
+
+    <script>
+      function openModal() {
+        document.getElementById('overlay').classList.add('active');
+        setTimeout(() => document.getElementById('wsName').focus(), 50);
+      }
+
+      function closeModal() {
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('wsName').value = '';
+      }
+
+      function handleOverlayClick(e) {
+        if (e.target === document.getElementById('overlay')) closeModal();
+      }
+
+      let cliOpen = false;
+      
+      const cliCommands = {
+        // list of commands available by CLI
+        help: () => 'Commands: help'
+      };
+
+      function toggleCLI() {
+        cliOpen = !cliOpen;
+        document.getElementById('cliPanel').classList.toggle('open', cliOpen);
+        if (cliOpen) setTimeout(() => document.getElementById('cliInput').focus(), 260);
+      }
+
+      function handleCLI(e) {
+        if (e.key !== 'Enter') return;
+
+        const input = document.getElementById('cliInput');
+        const cmd = input.value.trim();
+
+        if (!cmd) return;
+
+        input.value = '';
+
+        appendCLILine('>>> ' + cmd, '');
+
+        const fn = cliCommands[cmd.toLowerCase()];
+        if (fn) {
+          const result = fn();
+
+          if (result !== null && result !== undefined) appendCLILine(result, 'output');
+        } else appendCLILine(`Command not found: "${cmd}"`, 'error');
+      }
+
+      function appendCLILine(text, type) {
+        const body = document.getElementById('cliBody');
+        const div = document.createElement('div');
+
+        div.className = 'cli-line' + (type ? ' ' + type : '');
+        div.textContent = text;
+
+        body.appendChild(div);
+
+        body.scrollTop = body.scrollHeight;
+      }
+
+
+      async function loadAvailableVisualizers() {
+        const selectElement = document.getElementsByClassName('select-styled')[0];
+        const modalVisualizer = document.getElementById('modalVisualizer');
+        try {
+            const response = await fetch('http://127.0.0.1:5000/plugins/available?type=visualizer');
+            
+            if (!response.ok) {
+                throw new Error('Error getting plugins');
+            }
+
+            const styles = await response.json();
+            selectElement.innerHTML = '<option value="" disabled selected>Select a style</option>';
+            modalVisualizer.innerHTML = '<option value="" disabled selected>Select a style</option>';
+
+            styles.forEach(style => {
+              console.log(style)
+
+              const optionHeader = document.createElement('option');
+              const optionModule = document.createElement('option');
+
+              optionHeader.value = style; 
+              optionHeader.textContent = style; 
+
+              optionModule.value = style; 
+              optionModule.textContent = style; 
+
+              selectElement.appendChild(optionHeader);
+              modalVisualizer.appendChild(optionModule);
+            });
+
+        } catch (error) {
+            console.error('Error fetching styles:', error);
+            selectElement.innerHTML = '<option value="">Error loading styles</option>';
+            modalVisualizer.innerHTML = '<option value="">Error loading styles</option>';
+        }
+      }
+      
+
+      const workspaceSelect = document.getElementById('workspaceSelect');
+
+      async function loadWorkspaces(){
+          if(!workspaceSelect)
+            return;
+
+
+          try{
+            const response = await fetch('http://127.0.0.1:5000/workspace');
+            if(!response){
+              console.log('Error getting workspaces');
+              return;
+            }
+            
+            const workspaces = await response.json();
+            workspaceSelect.innerHTML = '<option value="" disabled selected>Select a workspace</option>';
+            
+            if(workspaces.length > 0){}
+              workspaceSelect.innerHTML = '';
+
+            workspaces.forEach(workspace => {
+              const option = document.createElement('option');
+
+              option.value = workspace.id;
+              option.textContent = workspace.name;
+
+              workspaceSelect.appendChild(option);
+            })
+            
+            if(workspaces.length > 0){
+              workspaceSelect.value = workspaces[0].id
+              loadWorkspaceData(workspaces[0].id)
+            }
+          }catch(error){
+              console.error('Error fetching workspaces:', error);
+              workspaceSelect.innerHTML = '<option value="">Error loading workspaces</option>';
+          }
+      }
+
+      async function loadWorkspaceData(id) {
+          try {
+              const response = await fetch(`http://127.0.0.1:5000/workspace/${id}`);
+              const data = await response.json();
+              console.log("Loaded workspace data:", data);
+              
+              const stylesDropdown = document.querySelector('.select-styled');
+              if(stylesDropdown){
+                stylesDropdown.value = data.visualizer
+              }
+
+              // update everything else (filters, search,......)
+          } catch (error) {
+              console.error("Error fetching workspace details:", error);
+          }
+      }
+
+      workspaceSelect.addEventListener('change', (event) => {
+          const selectedId = event.target.value;
+          
+          if (selectedId) {
+              loadWorkspaceData(selectedId);
+
+              const newUrl = new URL(window.location);
+              newUrl.searchParams.set('workspaceId', selectedId);
+              window.history.pushState({}, '', newUrl);
+          }
+      });
+
+      async function handleFileChange(){
+        console.log('jejjj');
+
+        const fileInput = document.getElementById('headerFile');
+        const file = fileInput.files[0];
+
+        if(!file){
+          console.log(`Wasn't able to change file`);
+          return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const workspaceId = urlParams.get('workspaceId');
+        if(!workspaceId){
+          console.log('Workspace id is not available');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('data', file)
+
+        try{
+          const response = await fetch(`http://127.0.0.1:5000/workspace/data/${workspaceId}`, {
+            method: 'PUT',
+            body: formData 
+          });
+
+          const result = await response.json();
+
+          if(result.success){
+            appendCLILine(`Successfully updated workspace: ${workspaceId}`, "output");
+            loadWorkspaceData(workspaceId);
+          }else{
+            appendCLILine(`Update failed for workspace ${workspaceId}: ${result.error}`, "error");
+          }
+
+        }catch (error) {
+          console.error("Connection error:", error);
+          appendCLILine("Connection error: Could not reach server", "error");
+
+        } finally {
+          fileInput.value = '';
+        }
+      }
+
+      async function updateVisualizer(newVisualizer) {
+          if (!newVisualizer) return;
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const workspaceId = urlParams.get('workspaceId');
+
+          if (!workspaceId) {
+              appendCLILine("Error: No active workspace to update style for", "error");
+              return;
+          }
+
+          if(!newVisualizer || newVisualizer === 'Loading styles...' || newVisualizer === 'Select a style') {
+              appendCLILine("Error: Couldnt change visualizer", "error");
+              return;
+          }
+
+          const formData = new FormData();
+          formData.append('visualizer', newVisualizer);
+
+          try {
+              const response = await fetch(`http://127.0.0.1:5000/workspace/visualizer/${workspaceId}`, {
+                  method: 'PUT',
+                  body: formData
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                  appendCLILine(`Style updated for workspace ${workspaceId} to: ${newVisualizer}`, "output");
+                  loadWorkspaceData(workspaceId);
+              } else {
+                  appendCLILine(`Failed to update workspace ${workspaceId} style: ${result.error}`, "error");
+              }
+
+          } catch (error) {
+              console.error("Update error:", error);
+              appendCLILine("Connection error: Could not save style.", "error");
+          }
+      }
+
+      async function createWorkspace() {
+        const nameInput = document.getElementById('wsName');
+        const fileInput = document.getElementById('modalFile');
+        const visualizerSelect = document.getElementById('modalVisualizer');
+        console.log(visualizerSelect)
+
+        const name = nameInput.value.trim();
+        const file = fileInput.files[0];
+        const visualizerValue = visualizerSelect ? visualizerSelect.value : "";
+
+        let isValid = true;
+        if (!name) {
+          nameInput.style.borderColor = '#e07070';
+          isValid = false;
+        }
+
+        if (!file) {
+          fileInput.parentElement.style.outline = '2px solid #e07070';
+          isValid = false;
+        }
+
+        if (!visualizerValue || visualizerValue === "" || visualizerValue === "Select a style") {
+          visualizerSelect.style.borderColor = '#e07070';
+          isValid = false;
+        }
+
+        if (!isValid) {
+          setTimeout(() => {
+            nameInput.style.borderColor = '';
+            fileInput.parentElement.style.outline = '';
+            visualizerSelect.style.borderColor = '';
+          }, 1200);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('name',name);
+        formData.append('data', file);
+        formData.append('visualizer', visualizerValue);
+
+        try{
+          const response = await fetch('http://127.0.0.1:5000/workspace', {
+            method: 'POST',
+            body: formData 
+          });
+
+          const result = await response.json();
+
+          if(result.success){
+            const sel = document.getElementById('workspaceSelect');
+            const opt = document.createElement('option');
+
+            opt.value = result.workspace_id; 
+            opt.textContent = name;
+            sel.appendChild(opt);
+
+            sel.value = result.workspace_id;
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('workspaceId', result.workspace_id);
+            window.history.pushState({}, '', newUrl);
+            
+            const styleDropdown = document.querySelector('.select-styled');
+            if(styleDropdown){
+              styleDropdown.value = visualizerValue;
+            }
+
+            closeModal();
+            nameInput.value = '';
+            fileInput.value = '';
+            
+            appendCLILine(`Workspace created: ${result.workspace_id}`, "output");
+          }else {
+            alert("Error: " + result.error);
+            appendCLILine(`Error:, ${result.error}`, "output");
+          }
+        }catch(error){
+          console.error("Connection error:", error);
+          appendCLILine(`Connection Error:, ${error}`, "output");
+        }
+      }
+
+      loadAvailableVisualizers();
+      loadWorkspaces();
+    </script>
+  </body>
+</html>
