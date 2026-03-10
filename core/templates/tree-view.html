@@ -1,0 +1,534 @@
+<!-- tree-view.html -->
+<div id="tree-view-panel">
+    <div id="tree-view-header">
+        <span id="tree-view-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M3 3h6v6H3zM15 3h6v6h-6zM15 15h6v6h-6zM3 15h6v6H3z"/>
+                <line x1="6" y1="9" x2="6" y2="12"/><line x1="6" y1="12" x2="18" y2="12"/>
+                <line x1="18" y1="9" x2="18" y2="15"/>
+            </svg>
+            Tree View
+        </span>
+        <div id="tree-view-controls">
+            <button id="tree-expand-all" title="Expand all">⊞</button>
+            <button id="tree-collapse-all" title="Collapse all">⊟</button>
+            <button id="tree-toggle-panel" title="Toggle panel">◀</button>
+        </div>
+    </div>
+    <div id="tree-view-body">
+        <ul id="tree-root" class="tree-list"></ul>
+    </div>
+</div>
+
+<style>
+    #tree-view-panel {
+        width: 260px;
+        min-width: 180px;
+        max-width: 380px;
+        height: 100%;
+        background: #ffffff;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+        font-size: 12px;
+        color: #333;
+        flex-shrink: 0;
+        transition: width 0.25s ease;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        resize: horizontal;
+    }
+
+    #tree-view-panel.collapsed {
+        width: 32px !important;
+        min-width: 32px;
+        resize: none;
+    }
+
+    #tree-view-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        background: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+        flex-shrink: 0;
+        gap: 6px;
+    }
+
+    #tree-view-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #666;
+    }
+
+    #tree-view-controls {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+    }
+
+    #tree-view-controls button {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 14px;
+        line-height: 1;
+        transition: color 0.15s, background 0.15s;
+    }
+
+    #tree-view-controls button:hover {
+        color: #333;
+        background: #e0e0e0;
+    }
+
+    #tree-view-body {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 6px 0;
+    }
+
+    #tree-view-panel.collapsed #tree-view-body,
+    #tree-view-panel.collapsed #tree-view-title,
+    #tree-view-panel.collapsed #tree-expand-all,
+    #tree-view-panel.collapsed #tree-collapse-all {
+        display: none;
+    }
+
+    #tree-view-body::-webkit-scrollbar { width: 5px; }
+    #tree-view-body::-webkit-scrollbar-track { background: transparent; }
+    #tree-view-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    .tree-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tree-item {
+        position: relative;
+    }
+
+    .tree-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 4px 8px;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        border-left: 2px solid transparent;
+        transition: background 0.1s;
+        gap: 0;
+    }
+
+    .tree-row:hover {
+        background: #f0f0f0;
+    }
+
+    .tree-row.selected {
+        background: #dbeafe;
+        border-left-color: #3b82f6;
+    }
+
+    .tree-row.focused {
+        background: #fef9c3;
+        border-left-color: #eab308;
+        outline: none;
+    }
+
+    .tree-row::before {
+        content: '';
+        display: inline-block;
+        width: calc(var(--depth, 0) * 16px);
+        flex-shrink: 0;
+    }
+
+    .tree-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 11px;
+        line-height: 1;
+        color: #3b82f6;
+        background: #f5f5f5;
+        transition: transform 0.15s, background 0.15s;
+        margin-right: 4px;
+    }
+
+    .tree-toggle:hover {
+        background: #e0e0e0;
+        border-color: #3b82f6;
+    }
+
+    .tree-toggle.loading {
+        animation: spin 0.6s linear infinite;
+        pointer-events: none;
+        color: #e5c07b;
+        font-size: 9px;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    .tree-spacer {
+        display: inline-block;
+        width: 20px;
+        flex-shrink: 0;
+    }
+
+    .tree-icon {
+        margin-right: 5px;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .tree-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #333;
+        font-size: 12px;
+    }
+
+    .tree-label .node-id {
+        color: #92400e;
+        font-weight: 600;
+        display: block;
+    }
+
+    .tree-label .node-attr-line {
+        display: block;
+        font-size: 11px;
+        line-height: 1.5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .tree-label .node-attr-key {
+        color: #888;
+    }
+
+    .tree-label .node-attr-val {
+        color: #333;
+    }
+
+    .tree-cycle-badge {
+        font-size: 9px;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #dc2626;
+        border-radius: 3px;
+        padding: 0 4px;
+        margin-left: 6px;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+    }
+
+    .tree-children {
+        overflow: hidden;
+    }
+
+    .tree-separator {
+        list-style: none;
+        padding: 4px 12px;
+        color: #ccc;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        user-select: none;
+    }
+
+    .tree-children.open  { max-height: 9999px; }
+    .tree-children.closed { max-height: 0; }
+
+    .tree-item > .tree-children > .tree-item > .tree-row::after {
+        content: '';
+        position: absolute;
+        left: calc(8px + var(--depth, 0) * 16px + 7px);
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: #2e3340;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+
+const TreeView = (() => {
+
+    let _graphData   = null;
+    let _adjList     = {};
+    let _nodeMap     = {};
+    let _rootId      = null;
+    let _rootIds     = [];
+    let _openSet     = new Set();
+    let _selectedId  = null;
+
+
+    const pub = {
+
+        init(graphData) {
+            _graphData = graphData;
+            _buildMaps();
+            _rootId = _graphData.nodes[0]?.id ?? null;
+            _rootIds = _findAllRoots();
+            _graphData.nodes.forEach(n => _openSet.add(n.id));
+            _render();
+        },
+
+        selectNode(nodeId) {
+            _selectedId = nodeId;
+            _ensureVisible(nodeId);
+            _render();
+            _scrollToNode(nodeId);
+        },
+
+        expandAll()  { _graphData.nodes.forEach(n => _openSet.add(n.id)); _render(); },
+        collapseAll(){ _openSet.clear(); _render(); },
+    };
+
+    function _buildMaps() {
+        _nodeMap  = {};
+        _adjList  = {};
+        _graphData.nodes.forEach(n => {
+            _nodeMap[n.id] = n;
+            _adjList[n.id] = [];
+        });
+        _graphData.links.forEach(l => {
+            const s = typeof l.source === 'object' ? l.source.id : l.source;
+            const t = typeof l.target === 'object' ? l.target.id : l.target;
+            if (_adjList[s]) _adjList[s].push(t);
+        });
+    }
+
+    function _findAllRoots() {
+        if (!_rootId) return [];
+        const reachable = new Set();
+        const queue = [_rootId];
+        while (queue.length) {
+            const cur = queue.shift();
+            if (reachable.has(cur)) continue;
+            reachable.add(cur);
+            (_adjList[cur] || []).forEach(c => queue.push(c));
+        }
+        const roots = [_rootId];
+        Object.keys(_nodeMap).forEach(id => {
+            if (!reachable.has(id)) roots.push(id);
+        });
+        return roots;
+    }
+
+    function _ensureVisible(nodeId) {
+        const parent = {};
+        const queue  = [_rootId];
+        const visited = new Set([_rootId]);
+        while (queue.length) {
+            const cur = queue.shift();
+            if (cur === nodeId) break;
+            (_adjList[cur] || []).forEach(child => {
+                if (!visited.has(child)) {
+                    visited.add(child);
+                    parent[child] = cur;
+                    queue.push(child);
+                }
+            });
+        }
+        let cur = nodeId;
+        while (cur) { _openSet.add(cur); cur = parent[cur]; }
+    }
+
+    function _scrollToNode(nodeId) {
+        setTimeout(() => {
+            const el = document.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`);
+            el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }, 50);
+    }
+
+
+    function _render() {
+        const root = document.getElementById('tree-root');
+        if (!root || !_rootId) return;
+        root.innerHTML = '';
+
+        console.log('_rootId:', _rootId);
+        console.log('_rootIds:', _rootIds);
+        console.log('_openSet:', [..._openSet]);
+
+        const reachable = new Set();
+        const queue = [_rootId];
+        while (queue.length) {
+            const cur = queue.shift();
+            if (reachable.has(cur)) continue;
+            reachable.add(cur);
+            (_adjList[cur] || []).forEach(c => queue.push(c));
+        }
+
+        console.log('reachable:', [...reachable]);
+        console.log('all nodes:', Object.keys(_nodeMap));
+
+        root.appendChild(_buildItem(_rootId, 0, new Set()));
+
+        Object.keys(_nodeMap).forEach(nodeId => {
+            if (reachable.has(nodeId)) return;
+
+            console.log('odvojen cvor:', nodeId);
+
+            const sep = document.createElement('li');
+            sep.className = 'tree-separator';
+            sep.innerHTML = '<span>─────────────</span>';
+            root.appendChild(sep);
+
+            root.appendChild(_buildItem(nodeId, 0, new Set()));
+        });
+    }
+
+    function _buildItem(nodeId, depth, ancestorSet) {
+        const node     = _nodeMap[nodeId];
+        const children = _adjList[nodeId] || [];
+        const isCycle  = ancestorSet.has(nodeId);
+        const isRoot   = _rootIds.includes(nodeId);
+        const isOpen   = _openSet.has(nodeId) && !isCycle;
+        const hasKids  = children.length > 0;
+
+        const li = document.createElement('li');
+        li.className = 'tree-item';
+
+        const row = document.createElement('div');
+        row.className = 'tree-row' + (_selectedId === nodeId ? ' selected' : '');
+        row.dataset.nodeId = nodeId;
+        row.style.setProperty('--depth', depth);
+        row.tabIndex = 0;
+
+        if (hasKids && !isCycle) {
+            const tog = document.createElement('span');
+            tog.className = 'tree-toggle';
+            tog.textContent = isOpen ? '−' : '+';
+            tog.addEventListener('click', e => {
+                e.stopPropagation();
+                _toggle(nodeId);
+            });
+            row.appendChild(tog);
+        } else {
+            const sp = document.createElement('span');
+            sp.className = 'tree-spacer';
+            row.appendChild(sp);
+        }
+
+        const icon = document.createElement('span');
+        icon.className = 'tree-icon';
+        icon.textContent = isCycle ? '🔁' : (hasKids ? (isOpen ? '📂' : '📁') : '📄');
+        row.appendChild(icon);
+
+        const label = document.createElement('span');
+        label.className = 'tree-label';
+
+        const idSpan = document.createElement('span');
+        idSpan.className = 'node-id';
+        idSpan.textContent = node?.id ?? nodeId;
+        label.appendChild(idSpan);
+
+        const SKIP = new Set(['id', 'x', 'y', 'vx', 'vy', 'index', 'fx', 'fy']);
+        if (node) {
+            Object.entries(node).forEach(([key, value]) => {
+                if (SKIP.has(key) || typeof value === 'object') return;
+                const attrLine = document.createElement('div');
+                attrLine.className = 'node-attr-line';
+                const keySpan = document.createElement('span');
+                keySpan.className = 'node-attr-key';
+                keySpan.textContent = key + ': ';
+                const valSpan = document.createElement('span');
+                valSpan.className = 'node-attr-val';
+                valSpan.textContent = value;
+                attrLine.appendChild(keySpan);
+                attrLine.appendChild(valSpan);
+                label.appendChild(attrLine);
+            });
+        }
+        row.appendChild(label);
+
+        if (isCycle) {
+            const badge = document.createElement('span');
+            badge.className = 'tree-cycle-badge';
+            badge.textContent = 'cycle';
+            row.appendChild(badge);
+        }
+
+        row.addEventListener('click', () => _selectNode(nodeId));
+        row.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _toggle(nodeId); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); if (!isOpen) _toggle(nodeId); }
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); if (isOpen)  _toggle(nodeId); }
+        });
+
+        li.appendChild(row);
+
+        if (hasKids && !isCycle) {
+            const ul = document.createElement('ul');
+            ul.className = 'tree-list tree-children';
+            ul.style.display = isOpen ? 'block' : 'none';
+
+            const newAncestors = new Set(ancestorSet);
+            newAncestors.add(nodeId);
+            children.forEach(childId => {
+                ul.appendChild(_buildItem(childId, depth + 1, newAncestors));
+            });
+
+            li.appendChild(ul);
+        }
+
+        return li;
+    }
+
+    function _toggle(nodeId) {
+        if (_openSet.has(nodeId)) {
+            _openSet.delete(nodeId);
+        } else {
+            _openSet.add(nodeId);
+        }
+        _render();
+    }
+
+    function _selectNode(nodeId) {
+        _selectedId = nodeId;
+        _render();
+        if (typeof window.onTreeNodeSelected === 'function') {
+            window.onTreeNodeSelected(nodeId);
+        }
+    }
+
+    return pub;
+})();
+
+document.getElementById('tree-expand-all')
+    ?.addEventListener('click', () => TreeView.expandAll());
+
+document.getElementById('tree-collapse-all')
+    ?.addEventListener('click', () => TreeView.collapseAll());
+
+document.getElementById('tree-toggle-panel')
+    ?.addEventListener('click', () => {
+        const panel = document.getElementById('tree-view-panel');
+        const btn   = document.getElementById('tree-toggle-panel');
+        panel.classList.toggle('collapsed');
+        btn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+    });
+</script>

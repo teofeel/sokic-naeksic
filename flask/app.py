@@ -1,11 +1,12 @@
 from flask import Flask, render_template_string, render_template, request, jsonify
 
-from api.models import Graph
+#from api.models import Graph
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 from core.sokic.core.use_cases.Workspace import Workspace
 from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
+import json
 from utils.workspace import create_default_workspace
 from utils.graph import generate_graph
 
@@ -40,12 +41,18 @@ def test_visualizer():
     print(graph_model.edges)
     print(graph_model.nodes)
 
-    #visualizer = loader.plugins['visualizer']['block']
-    visualizer = loader.plugins['visualizer']['simple']
+    visualizer = loader.plugins['visualizer']['block']
+    #visualizer = loader.plugins['visualizer']['simple']
     graph_html = visualizer.visualize(graph_model)
     # print(graph_html)
+    graph_data = {
+        "nodes": [{"id": node_id, **node_obj.data}
+                  for node_id, node_obj in graph_model.nodes.items()],
+        "links": [{"source": edge_obj.source, "target": edge_obj.target}
+                  for edge_obj in graph_model.edges.values()]
+    }
 
-    return render_template('main-view.html', plugin_html=graph_html)
+    return render_template('main-view.html', plugin_html=graph_html, graph_data_json=json.dumps(graph_data))
 
     #return render_template_string("""
     #    <!DOCTYPE html>
