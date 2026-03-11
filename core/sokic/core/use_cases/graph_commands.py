@@ -9,6 +9,9 @@ class SearchGraphCommand(BaseCommand):
     def command_name(self) -> str:
         return "search"
 
+    def required_args(self) -> list[str]:
+        return []
+
     def execute(self) -> str:
         # TODO implement logic
         pass
@@ -21,6 +24,9 @@ class FilterGraphCommand(BaseCommand):
     def command_name(self) -> str:
         return "filter"
 
+    def required_args(self) -> list[str]:
+        return []
+
     def execute(self) -> str:
         # TODO implement logic
         pass
@@ -32,6 +38,9 @@ class DeleteGraphCommand(BaseCommand):
     @property
     def command_name(self) -> str:
         return "delete"
+
+    def required_args(self) -> list[str]:
+        return []
 
     def execute(self) -> str:
         # TODO implement logic

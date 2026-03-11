@@ -9,11 +9,14 @@ class AddNodeCommand(BaseCommand):
     def command_name(self) -> str:
         return "add-node"
 
+    @property
+    def required_args(self) -> list[str]:
+        return ["id"]
+
     def execute(self) -> str:
-        if not self.args.data:
-            return "ERROR - no arguments provided"
-        if "id" not in self.args.data:
-            return "ERROR - no id provided"
+        missing = [arg for arg in self.required_args if arg not in self.args.data]
+        if missing:
+            return f"ERROR - missing required: {', '.join(missing)}"
         node_id = self.args.data["id"]
         # TODO add the node to the corresponding graph
         return f'SUCCESS - added node {node_id}'
@@ -26,11 +29,16 @@ class UpdateNodeCommand(BaseCommand):
     def command_name(self) -> str:
         return "update-node"
 
+    @property
+    def required_args(self) -> list[str]:
+        return ["id"]
+
     def execute(self) -> str:
-        if not self.args.data:
-            return "ERROR - no arguments provided"
-        if "id" not in self.args.data or len(self.args.data) < 2:
-            return "ERROR - no required arguments provided"
+        missing = [arg for arg in self.required_args if arg not in self.args.data]
+        if missing:
+            return f"ERROR - missing required: {', '.join(missing)}"
+        if len(self.args.data) < 2:
+            return "ERROR - no attributes listed to update"
         node_id = self.args.data["id"]
         # TODO updating node logic
         return f'SUCCESS - updated node {self.args.data["id"]}'
@@ -43,11 +51,15 @@ class RemoveNodeCommand(BaseCommand):
     def command_name(self) -> str:
         return "remove-node"
 
+    @property
+    def required_args(self) -> list[str]:
+        return ["id"]
+
     def execute(self) -> str:
-        if not self.args.data:
-            return "ERROR - no arguments provided"
-        if "id" not in self.args.data:
-            return "ERROR - no id provided"
+        missing = [arg for arg in self.required_args if arg not in self.args.data]
+        if missing:
+            return f"ERROR - missing required: {', '.join(missing)}"
+
         node_id = self.args.data["id"]
         # TODO actually remove the node from the graph
         # TODO check if node can be removed without hindrance to edges

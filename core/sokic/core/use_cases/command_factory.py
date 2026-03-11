@@ -40,5 +40,27 @@ class NotFoundCommand(BaseCommand):
     def command_name(self) -> str:
         return self._name
 
+    @property
+    def required_args(self) -> list[str]:
+        return []
+
     def execute(self) -> str:
         return f"ERROR - command not found: {self.command_name}"
+
+class HelpCommand(BaseCommand):
+    def __init__(self, commands):
+        self._commands: Final[Sequence[BaseCommand]] = commands
+
+    @property
+    def command_name(self) -> str:
+        return "help"
+
+    def required_args(self) -> list[str]:
+        return []
+
+    def execute(self) -> str:
+        lines = ["Available Commands:"]
+        for cmd in self._commands:
+            req = f"Required: {', '.join(cmd.required_args)}" if cmd.required_args else "None"
+            lines.append(f"- {cmd.command_name} ({req})")
+        return "\n".join(lines)

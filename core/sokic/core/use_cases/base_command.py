@@ -14,6 +14,11 @@ class BaseCommand(ABC):
     def command_name(self) -> str:
         pass
 
+    @property
+    @abstractmethod
+    def required_args(self) -> list[str]:
+        return []
+
     @abstractmethod
     def execute(self) -> str:
         pass
