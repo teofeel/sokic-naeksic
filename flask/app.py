@@ -1,6 +1,7 @@
 from flask import Flask, render_template_string, render_template, request, jsonify
 from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
 from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
+from core.sokic.core.use_cases.command_processor import CommandProcessor
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
 from core.sokic.core.use_cases.Workspace import Workspace
 from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
@@ -11,7 +12,7 @@ from utils.graph import generate_graph
 from pathlib import Path
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-
+command_processor = CommandProcessor()
 loader = PluginLoader()
 loader.load_all()
 workspace_manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
@@ -53,6 +54,10 @@ def test_visualizer():
     return render_template('index.html')
 
 
+@app.route('/cli-command')
+def cli_command():
+    cmd = request.args.get('command')
+    return command_processor.process_command(cmd)
 
 @app.route('/workspace/views/<workspace_id>')
 def get_workspace_views(workspace_id):

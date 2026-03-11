@@ -70,11 +70,6 @@
 
       let cliOpen = false;
 
-      const cliCommands = {
-        // list of commands available by CLI
-        help: () => 'Commands: help'
-      };
-
       function toggleCLI() {
         cliOpen = !cliOpen;
         document.getElementById('cliPanel').classList.toggle('open', cliOpen);
@@ -93,12 +88,9 @@
 
         appendCLILine('>>> ' + cmd, '');
 
-        const fn = cliCommands[cmd.toLowerCase()];
-        if (fn) {
-          const result = fn();
-
-          if (result !== null && result !== undefined) appendCLILine(result, 'output');
-        } else appendCLILine(`Command not found: "${cmd}"`, 'error');
+        const response = await fetch(`/cli-command?command=${encodeURIComponent(cmd)}`);
+        const resultText = await response.text();
+        appendCLILine(resultText, 'output');
       }
 
       function appendCLILine(text, type) {
