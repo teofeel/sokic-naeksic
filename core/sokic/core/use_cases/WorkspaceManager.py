@@ -202,3 +202,12 @@ class WorkspaceManager:
             return ""
 
         return workspace.get_search()
+
+    def reset_workspace(self, workspace_id: str) -> bool:
+        workspace = self.repository.load_by_id(workspace_id)
+        if not workspace:
+            return False
+        workspace.clear_filters()
+        workspace.clear_search()
+        self.repository.update(workspace)
+        return True

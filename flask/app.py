@@ -220,6 +220,70 @@ def get_workspace_metadata(workspace_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/workspace/<workspace_id>/search', methods=['PUT'])
+def search_workspace(workspace_id):
+    try:
+        ws = workspace_manager.get_workspace(workspace_id)
+        if not ws:
+            raise ValueError('Workspace not found')
+
+        query = request.form.get('query')
+        if not query:
+            raise ValueError('Search query is required')
+
+        workspace_manager.set_search(query, workspace_id)
+        graph_html = workspace_manager.get_render(workspace_id)
+
+        return jsonify({'success': True, 'html': graph_html}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/workspace/<workspace_id>/filter', methods=['PUT'])
+def filter_workspace(workspace_id):
+    try:
+        ws = workspace_manager.get_workspace(workspace_id)
+        if not ws:
+            raise ValueError('Workspace not found')
+
+        filter_query = request.form.get('filter')
+        if not filter_query:
+            raise ValueError('Filter query is required')
+
+        workspace_manager.add_filter(filter_query, workspace_id)
+        graph_html = workspace_manager.get_render(workspace_id)
+
+        return jsonify({'success': True, 'html': graph_html}), 200
+
+    except FilterParseError as e:
+        return jsonify({'error': str(e), 'type': 'parse_error'}), 400
+    except FilterTypeError as e:
+        return jsonify({'error': str(e), 'type': 'type_error'}), 400
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/workspace/<workspace_id>/reset', methods=['PUT'])
+def reset_workspace(workspace_id):
+    try:
+        ws = workspace_manager.get_workspace(workspace_id)
+        if not ws:
+            raise ValueError('Workspace not found')
+
+        workspace_manager.reset_workspace(workspace_id)
+        graph_html = workspace_manager.get_render(workspace_id)
+
+        return jsonify({'success': True, 'html': graph_html}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     create_default_workspace(workspace_manager)

@@ -1,6 +1,6 @@
 from sokic.api.services import DataSourcePlugin, VisualizerPlugin
 from sokic.api.models import Graph
-from core.sokic.core.use_cases.filter_service_impl import FilterServiceImpl
+from core.sokic.core.use_cases.filter_service_impl import FilterServiceImpl, _parse_filter_query
 from core.sokic.core.use_cases.search_service_impl import SearchServiceImpl
 from typing import Optional, List
 import uuid
@@ -53,7 +53,7 @@ class Workspace:
         """
         if query in self.filter_queries:
             return False
-
+        temp = self.filter_service.filter_subgraph(self.active_graph, query)
         self.filter_queries.append(query)
         self.rebuild_graph()
 
@@ -139,3 +139,11 @@ class Workspace:
         :return: Active search
         """
         return self.search_query
+
+    def clear_filters(self):
+        self.filter_queries = []
+        self.rebuild_graph()
+
+    def clear_search(self):
+        self.search_query = None
+        self.rebuild_graph()

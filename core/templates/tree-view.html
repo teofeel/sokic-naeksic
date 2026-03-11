@@ -365,41 +365,29 @@
 
 
     function _render() {
-        const root = document.getElementById('tree-root');
-        if (!root || !_rootId) return;
-        root.innerHTML = '';
+    const root = document.getElementById('tree-root');
+    if (!root || !_rootId) return;
+    root.innerHTML = '';
+    const hasParent = new Set();
+    _graphData.links.forEach(l => {
+        const t = typeof l.target === 'object' ? l.target.id : l.target;
+        hasParent.add(t);
+    });
 
-        console.log('_rootId:', _rootId);
-        console.log('_rootIds:', _rootIds);
-        console.log('_openSet:', [..._openSet]);
+    const rootNodes = Object.keys(_nodeMap).filter(id => !hasParent.has(id));
 
-        const reachable = new Set();
-        const queue = [_rootId];
-        while (queue.length) {
-            const cur = queue.shift();
-            if (reachable.has(cur)) continue;
-            reachable.add(cur);
-            (_adjList[cur] || []).forEach(c => queue.push(c));
-        }
+    const actualRoots = rootNodes.length > 0 ? rootNodes : [_rootId];
 
-        console.log('reachable:', [...reachable]);
-        console.log('all nodes:', Object.keys(_nodeMap));
-
-        root.appendChild(_buildItem(_rootId, 0, new Set()));
-
-        Object.keys(_nodeMap).forEach(nodeId => {
-            if (reachable.has(nodeId)) return;
-
-            console.log('odvojen cvor:', nodeId);
-
+    actualRoots.forEach((rootId, i) => {
+        if (i > 0) {
             const sep = document.createElement('li');
             sep.className = 'tree-separator';
             sep.innerHTML = '<span>─────────────</span>';
             root.appendChild(sep);
-
-            root.appendChild(_buildItem(nodeId, 0, new Set()));
-        });
-    }
+        }
+        root.appendChild(_buildItem(rootId, 0, new Set()));
+    });
+}
 
     function _buildItem(nodeId, depth, ancestorSet) {
         const node     = _nodeMap[nodeId];
