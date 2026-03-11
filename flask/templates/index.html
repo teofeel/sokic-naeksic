@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Graph Workspace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    {% include 'header.html' %}
+
+    {% include 'modal.html' %}
+
+    <div class="canvas" id="mainCanvas">
+        <h1 class="no-data">No data loaded yet</h1>
+    </div>
+
+    {% include 'cli.html' %}
+    <script>
+        async function loadViews(workspaceId) {
+            if (!workspaceId) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/workspace/views/${workspaceId}`);
+                if (!response.ok) throw new Error('Failed to load views');
+
+                const html = await response.text();
+                const canvas = document.getElementById('mainCanvas');
+                canvas.innerHTML = html;
+
+                const scripts = Array.from(canvas.querySelectorAll('script'));
+
+                for (const oldScript of scripts) {
+                    await new Promise((resolve) => {
+                        const newScript = document.createElement('script');
+
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                            newScript.onload = resolve;
+                            newScript.onerror = resolve;
+
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                            resolve();
+                        }
+                        document.body.appendChild(newScript);
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading views:', error);
+                appendCLILine('Error loading views', 'error');
+            }
+        }
+
+      function openModal() {
+        document.getElementById('overlay').classList.add('active');
+        setTimeout(() => document.getElementById('wsName').focus(), 50);
+      }
+
+      function closeModal() {
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('wsName').value = '';
+      }
+
+      function handleOverlayClick(e) {
+        if (e.target === document.getElementById('overlay')) closeModal();
+      }
+
+      let cliOpen = false;
+
+      const cliCommands = {
+        // list of commands available by CLI
+        help: () => 'Commands: help'
+      };
+
+      function toggleCLI() {
+        cliOpen = !cliOpen;
+        document.getElementById('cliPanel').classList.toggle('open', cliOpen);
+        if (cliOpen) setTimeout(() => document.getElementById('cliInput').focus(), 260);
+      }
+
+      function handleCLI(e) {
+        if (e.key !== 'Enter') return;
+
+        const input = document.getElementById('cliInput');
+        const cmd = input.value.trim();
+
+        if (!cmd) return;
+
+        input.value = '';
+
+        appendCLILine('>>> ' + cmd, '');
+
+        const fn = cliCommands[cmd.toLowerCase()];
+        if (fn) {
+          const result = fn();
+
+          if (result !== null && result !== undefined) appendCLILine(result, 'output');
+        } else appendCLILine(`Command not found: "${cmd}"`, 'error');
+      }
+
+      function appendCLILine(text, type) {
+        const body = document.getElementById('cliBody');
+        const div = document.createElement('div');
+
+        div.className = 'cli-line' + (type ? ' ' + type : '');
+        div.textContent = text;
+
+        body.appendChild(div);
+
+        body.scrollTop = body.scrollHeight;
+      }
+
+
+      async function loadAvailableVisualizers() {
+        const selectElement = document.getElementsByClassName('select-styled')[0];
+        const modalVisualizer = document.getElementById('modalVisualizer');
+        try {
+            const response = await fetch('http://127.0.0.1:5000/plugins/available?type=visualizer');
+
+            if (!response.ok) {
+                throw new Error('Error getting plugins');
+            }
+
+            const styles = await response.json();
+            selectElement.innerHTML = '<option value="" disabled selected>Select a style</option>';
+            modalVisualizer.innerHTML = '<option value="" disabled selected>Select a style</option>';
+
+            styles.forEach(style => {
+              console.log(style)
+
+              const optionHeader = document.createElement('option');
+              const optionModule = document.createElement('option');
+
+              optionHeader.value = style;
+              optionHeader.textContent = style;
+
+              optionModule.value = style;
+              optionModule.textContent = style;
+
+              selectElement.appendChild(optionHeader);
+              modalVisualizer.appendChild(optionModule);
+            });
+
+        } catch (error) {
+            console.error('Error fetching styles:', error);
+            selectElement.innerHTML = '<option value="">Error loading styles</option>';
+            modalVisualizer.innerHTML = '<option value="">Error loading styles</option>';
+        }
+      }
+
+
+      const workspaceSelect = document.getElementById('workspaceSelect');
+
+      async function loadWorkspaces(){
+          if(!workspaceSelect)
+            return;
+
+
+          try{
+            const response = await fetch('http://127.0.0.1:5000/workspace');
+            if(!response){
+              console.log('Error getting workspaces');
+              return;
+            }
+
+            const workspaces = await response.json();
+            workspaceSelect.innerHTML = '<option value="" disabled selected>Select a workspace</option>';
+
+            if(workspaces.length > 0){}
+              workspaceSelect.innerHTML = '';
+
+            workspaces.forEach(workspace => {
+              const option = document.createElement('option');
+
+              option.value = workspace.id;
+              option.textContent = workspace.name;
+
+              workspaceSelect.appendChild(option);
+            })
+
+            if(workspaces.length > 0){
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlId = urlParams.get('workspaceId');
+                const defaultId = urlId && workspaces.find(w => w.id === urlId) ? urlId : workspaces[0].id;
+
+                workspaceSelect.value = defaultId;
+
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('workspaceId', defaultId);
+                window.history.pushState({}, '', newUrl);
+
+                loadWorkspaceData(defaultId);
+            }
+          }catch(error){
+              console.error('Error fetching workspaces:', error);
+              workspaceSelect.innerHTML = '<option value="">Error loading workspaces</option>';
+          }
+      }
+
+      async function loadWorkspaceData(id) {
+          try {
+              const response = await fetch(`http://127.0.0.1:5000/workspace/${id}`);
+              const data = await response.json();
+              console.log("Loaded workspace data:", data);
+
+              const stylesDropdown = document.querySelector('.select-styled');
+              if(stylesDropdown){
+                stylesDropdown.value = data.visualizer
+              }
+
+                loadViews(id);
+              // update everything else (filters, search,......)
+          } catch (error) {
+              console.error("Error fetching workspace details:", error);
+          }
+      }
+
+      workspaceSelect.addEventListener('change', (event) => {
+          const selectedId = event.target.value;
+
+          if (selectedId) {
+              loadWorkspaceData(selectedId);
+
+              const newUrl = new URL(window.location);
+              newUrl.searchParams.set('workspaceId', selectedId);
+              window.history.pushState({}, '', newUrl);
+          }
+      });
+
+      async function handleFileChange(){
+        console.log('jejjj');
+
+        const fileInput = document.getElementById('headerFile');
+        const file = fileInput.files[0];
+
+        if(!file){
+          console.log(`Wasn't able to change file`);
+          return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const workspaceId = urlParams.get('workspaceId');
+        if(!workspaceId){
+          console.log('Workspace id is not available');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('data', file)
+
+        try{
+          const response = await fetch(`http://127.0.0.1:5000/workspace/data/${workspaceId}`, {
+            method: 'PUT',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if(result.success){
+            appendCLILine(`Successfully updated workspace: ${workspaceId}`, "output");
+            loadWorkspaceData(workspaceId);
+          }else{
+            appendCLILine(`Update failed for workspace ${workspaceId}: ${result.error}`, "error");
+          }
+
+        }catch (error) {
+          console.error("Connection error:", error);
+          appendCLILine("Connection error: Could not reach server", "error");
+
+        } finally {
+          fileInput.value = '';
+        }
+      }
+
+      async function updateVisualizer(newVisualizer) {
+          if (!newVisualizer) return;
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const workspaceId = urlParams.get('workspaceId');
+
+          if (!workspaceId) {
+              appendCLILine("Error: No active workspace to update style for", "error");
+              return;
+          }
+
+          if(!newVisualizer || newVisualizer === 'Loading styles...' || newVisualizer === 'Select a style') {
+              appendCLILine("Error: Couldnt change visualizer", "error");
+              return;
+          }
+
+          const formData = new FormData();
+          formData.append('visualizer', newVisualizer);
+
+          try {
+              const response = await fetch(`http://127.0.0.1:5000/workspace/visualizer/${workspaceId}`, {
+                  method: 'PUT',
+                  body: formData
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                  appendCLILine(`Style updated for workspace ${workspaceId} to: ${newVisualizer}`, "output");
+                  await loadWorkspaceData(workspaceId);
+              } else {
+                  appendCLILine(`Failed to update workspace ${workspaceId} style: ${result.error}`, "error");
+              }
+
+          } catch (error) {
+              console.error("Update error:", error);
+              appendCLILine("Connection error: Could not save style.", "error");
+          }
+      }
+
+      async function createWorkspace() {
+        const nameInput = document.getElementById('wsName');
+        const fileInput = document.getElementById('modalFile');
+        const visualizerSelect = document.getElementById('modalVisualizer');
+        console.log(visualizerSelect)
+
+        const name = nameInput.value.trim();
+        const file = fileInput.files[0];
+        const visualizerValue = visualizerSelect ? visualizerSelect.value : "";
+
+        let isValid = true;
+        if (!name) {
+          nameInput.style.borderColor = '#e07070';
+          isValid = false;
+        }
+
+        if (!file) {
+          fileInput.parentElement.style.outline = '2px solid #e07070';
+          isValid = false;
+        }
+
+        if (!visualizerValue || visualizerValue === "" || visualizerValue === "Select a style") {
+          visualizerSelect.style.borderColor = '#e07070';
+          isValid = false;
+        }
+
+        if (!isValid) {
+          setTimeout(() => {
+            nameInput.style.borderColor = '';
+            fileInput.parentElement.style.outline = '';
+            visualizerSelect.style.borderColor = '';
+          }, 1200);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('name',name);
+        formData.append('data', file);
+        formData.append('visualizer', visualizerValue);
+
+        try{
+          const response = await fetch('http://127.0.0.1:5000/workspace', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if(result.success){
+            const sel = document.getElementById('workspaceSelect');
+            const opt = document.createElement('option');
+
+            opt.value = result.workspace_id;
+            opt.textContent = name;
+            sel.appendChild(opt);
+
+            sel.value = result.workspace_id;
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('workspaceId', result.workspace_id);
+            window.history.pushState({}, '', newUrl);
+
+            const styleDropdown = document.querySelector('.select-styled');
+            if(styleDropdown){
+              styleDropdown.value = visualizerValue;
+            }
+
+            closeModal();
+            nameInput.value = '';
+            fileInput.value = '';
+
+            await loadViews(result.workspace_id);
+
+            appendCLILine(`Workspace created: ${result.workspace_id}`, "output");
+          }else {
+            alert("Error: " + result.error);
+            appendCLILine(`Error:, ${result.error}`, "output");
+          }
+        }catch(error){
+          console.error("Connection error:", error);
+          appendCLILine(`Connection Error:, ${error}`, "output");
+        }
+      }
+
+      loadAvailableVisualizers();
+      loadWorkspaces();
+
+    </script>
+</body>
+</html>

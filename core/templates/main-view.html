@@ -12,25 +12,23 @@
 </div>
 
 <style>
-        .main-view-container {
-            max-width: 1400px;
-            margin: 0 auto;
-
-            background: white;
-            padding: 15px;
-        }
-
         #main-view-wrapper {
             display: flex;
-
             width: 100%;
-            height: 700px;
-
+            height: 100%;
             border: 1px solid #ccc;
             border-radius: 4px;
-
             overflow: hidden;
             position: relative;
+        }
+
+        .main-view-container {
+            max-width: unset;
+            margin: 0;
+            padding: 0;
+            background: white;
+            width: 100%;
+            height: 100%;
         }
 
         #graph-canvas-container {
@@ -83,8 +81,8 @@
 </style>
 <script>
 
-        let zoomLayer = null;
-        let currentTransform = d3.zoomIdentity;
+        window.zoomLayer = null;
+        window.currentTransform = d3.zoomIdentity;
 
         function waitForSvg() {
             const svgElement = document.querySelector("#graph-viewport svg");
