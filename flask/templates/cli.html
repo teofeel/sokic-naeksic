@@ -1,0 +1,22 @@
+<div class="cli-panel" id="cliPanel">
+      <div class="cli-header">
+        <span class="cli-header-title">Welcome to CLI</span>
+        <button class="cli-close" onclick="toggleCLI()" aria-label="Close CLI">&times;</button>
+      </div>
+      <div class="cli-body" id="cliBody">
+        <div class="cli-line">Graph Workspace CLI v1.0.0</div>
+        <div class="cli-line">Type <span style="color:#f0c060">help</span> for available commands.</div>
+      </div>
+      <div class="cli-input-row">
+        <span class="cli-prompt">&gt;&gt;&gt;</span>
+        <input
+          class="cli-input"
+          id="cliInput"
+          type="text"
+          placeholder="Enter command..."
+          onkeydown="handleCLI(event)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+</div>
