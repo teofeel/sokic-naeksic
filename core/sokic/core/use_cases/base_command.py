@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, Any
 
+from core.sokic.core.use_cases.Workspace import Workspace
+
+
 @dataclass
 class CommandArguments:
     command_name: str
