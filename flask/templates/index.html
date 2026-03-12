@@ -49,7 +49,9 @@
 
                 const html = await response.text();
                 const canvas = document.getElementById('mainCanvas');
-                canvas.innerHTML = html;
+                canvas.innerHTML = html || '<h1 class="no-data">No data loaded yet</h1>';
+
+                if(!html) return;
 
                 const scripts = Array.from(canvas.querySelectorAll('script'));
 
@@ -115,7 +117,7 @@
         const response = await fetch(`/cli-command?command=${encodeURIComponent(cmd)}&workspace=${encodeURIComponent(workspaceId)}`);
         const resultText = await response.text();
 
-        await loadViews(workspaceId);
+        await loadWorkspaceData(workspaceId);
         appendCLILine(resultText, 'output');
     }
 
@@ -374,10 +376,10 @@ async function updateMainView(workspaceId) {
               showSFError('');
               activeOperations.length = 0;
               (data.filters || []).forEach(f => activeOperations.push({ type: 'filter', label: f }));
-              if (data.search) activeOperations.push({ type: 'search', label: data.search });
+              (data.search || []).forEach(f => activeOperations.push({ type: 'search', label: f }));
               renderActiveTags();
 
-                loadViews(id);
+              await  loadViews(id);
               // update everything else (filters, search,......)
           } catch (error) {
               console.error("Error fetching workspace details:", error);

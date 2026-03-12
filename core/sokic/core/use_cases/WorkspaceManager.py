@@ -14,28 +14,30 @@ class WorkspaceManager:
         self.plugin_loader = plugin_loader
         self.repository: WorkspaceRepository = repository
 
-    def create_workspace(self, name: str, graph: Graph, datasource_key: str, visualizer_key: str) -> str:
+    def create_workspace(self, name: str, graph: Graph, datasource_key: Optional[str], visualizer_key: Optional[str]) -> str:
         """
         Used to create a new workspace
         :param name: Name of the workspace
         :param graph: Graph object
-        :param datasource_key: String name of the datasource plugin
-        :param visualizer_key: String name of the visualizer plugin
+        :param datasource_key: String name of the datasource plugin [Optional]
+        :param visualizer_key: String name of the visualizer plugin [Optional]
         :return: ID of the new workspace
         """
-
-        datasource_plugin = self.plugin_loader.plugins['datasource'][datasource_key]
-        if datasource_plugin is None:
-            raise ValueError(f'Datasource plugin {datasource_key} not found')
-
-        visualizer_plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
-        if visualizer_plugin is None:
-            raise ValueError(f'Visualizer plugin {visualizer_key} not found')
-
         workspace = Workspace(name, graph)
 
-        workspace.set_datasource(datasource_plugin)
-        workspace.set_visualizer(visualizer_plugin)
+        if datasource_key:
+            datasource_plugin = self.plugin_loader.plugins['datasource'][datasource_key]
+            if datasource_plugin is None:
+                raise ValueError(f'Datasource plugin {datasource_key} not found')
+
+            workspace.set_datasource(datasource_plugin)
+
+        if visualizer_key:
+            visualizer_plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
+            if visualizer_plugin is None:
+                raise ValueError(f'Visualizer plugin {visualizer_key} not found')
+
+            workspace.set_visualizer(visualizer_plugin)
 
         self.repository.save(workspace)
 
@@ -55,7 +57,7 @@ class WorkspaceManager:
         return workspace.render()
 
 
-    def set_search(self, query: str, workspace_id: str):
+    def add_search(self, query: str, workspace_id: str):
         """
         Sets search to active workspace
         :param query: Query for the search
@@ -64,7 +66,7 @@ class WorkspaceManager:
         """
         workspace = self.repository.load_by_id(workspace_id)
         if workspace:
-            workspace.set_search(query)
+            workspace.add_search(query)
             self.repository.update(workspace)
 
 
@@ -202,6 +204,17 @@ class WorkspaceManager:
             return ""
 
         return workspace.get_search()
+
+    def flush(self, ws: Workspace) -> bool:
+        """
+        Used to save data of one workspace
+        :param ws: Workspace
+        :return: True if saved, otherwise False
+        """
+        if not ws:
+            return False
+
+        return self.repository.update(ws)
 
     def reset_workspace(self, workspace_id: str) -> bool:
         workspace = self.repository.load_by_id(workspace_id)

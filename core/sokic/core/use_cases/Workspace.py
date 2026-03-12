@@ -21,7 +21,7 @@ class Workspace:
         self.visualizer: Optional[VisualizerPlugin] = None
 
         self.filter_queries: List[str] = []
-        self.search_query: Optional[str] = None
+        self.search_query: List[str] = []
 
         self.filter_service = FilterServiceImpl()
         self.search_service = SearchServiceImpl()
@@ -80,13 +80,13 @@ class Workspace:
         return changed
 
 
-    def set_search(self, query: str):
+    def add_search(self, query: str):
         """
         Set search query to this workspace
         :param query: Search string used to filter nodes
         :return:
         """
-        self.search_query = query
+        self.search_query.append(query)
         self.rebuild_graph()
 
 
@@ -145,5 +145,5 @@ class Workspace:
         self.rebuild_graph()
 
     def clear_search(self):
-        self.search_query = None
+        self.search_query = []
         self.rebuild_graph()

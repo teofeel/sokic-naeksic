@@ -16,8 +16,11 @@ class SearchServiceImpl(SearchService):
                     break
         return result
 
-    def search_subgraph(self, graph: Graph, query: str) -> Graph:
-        return build_subgraph(graph, self.search_nodes(graph, query))
+    def search_subgraph(self, graph: Graph, queries: List[str]) -> Graph:
+        for query in queries:
+            graph = build_subgraph(graph, self.search_nodes(graph, query))
+
+        return graph
 
     def search_edges(self, graph: Graph, query: str) -> List[Edge]:
         q = query.lower()

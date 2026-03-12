@@ -1,11 +1,11 @@
 from flask import Flask, render_template_string, render_template, request, jsonify
-from core.sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
-from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
-from core.sokic.core.use_cases.command_processor import CommandProcessor
-from core.sokic.core.use_cases.plugin_loader import PluginLoader
-from core.sokic.core.use_cases.Workspace import Workspace
-from core.sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
-from core.sokic.core.use_cases.view_renderer import ViewRenderer
+from sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
+from sokic.core.use_cases.WorkspaceManager import WorkspaceManager
+from sokic.core.use_cases.command_processor import CommandProcessor
+from sokic.core.use_cases.plugin_loader import PluginLoader
+from sokic.core.use_cases.Workspace import Workspace
+from sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
+from sokic.core.use_cases.view_renderer import ViewRenderer
 from utils.workspace import create_default_workspace
 from utils.graph import generate_graph
 
@@ -30,26 +30,9 @@ app.jinja_loader = ChoiceLoader([
     FileSystemLoader(str(core_templates)),
 ])
 
-# @app.route("/")
-# def index():
-#     return ("<p> hello teammates, please implement me </p>"
-#             "🥺"
-#             "<p>👉👈</p>")
 
 @app.route('/')
 def test_visualizer():
-    #yaml_plugin = loader.plugins['datasource']['json']
-    #print(yaml_plugin)
-#
-    #graph_model = yaml_plugin.convert_to_graph('test.json')
-    #print("graf: ")
-    #print(graph_model.edges)
-    #print(graph_model.nodes)
-#
-    #visualizer = loader.plugins['visualizer']['block']
-    #visualizer = loader.plugins['visualizer']['simple']
-    #graph_html = visualizer.visualize(graph_model)
-    #print(graph_html)
 
     return render_template('index.html')
 
@@ -59,70 +42,16 @@ def cli_command():
     cmd = request.args.get('command')
     workspace_id = request.args.get('workspace')
     active_workspace = workspace_manager.get_workspace(workspace_id)
-    return command_processor.process_command(cmd, active_workspace)
+    res = command_processor.process_command(cmd, active_workspace)
+    workspace_manager.repository.update(active_workspace)
+    return res
 
 @app.route('/workspace/views/<workspace_id>')
 def get_workspace_views(workspace_id):
     workspace = workspace_manager.get_workspace(workspace_id)
 
-    return renderer.render_views_from_workspace(workspace)
+    return renderer.render_views_from_workspace(workspace) or '', 200
 
-@app.route('/test-search')
-def test_filter_and_search():
-    yaml_plugin = loader.plugins['datasource']['yaml']
-    graph = yaml_plugin.convert_to_graph('test.yaml')
-
-    results = {}
-
-    # ── SEARCH ───────────────────────────────────────────────────
-    results["search_nikola"]  = [n.id for n in search_service.search_nodes(graph, "nikola")]
-    results["search_born"]    = [n.id for n in search_service.search_nodes(graph, "born")]
-    results["search_1995"]    = [n.id for n in search_service.search_nodes(graph, "1995")]
-    results["search_grandpa"] = [n.id for n in search_service.search_edges(graph, "grandpa")]
-
-    # ── FILTER ───────────────────────────────────────────────────
-    results["filter_born>=1990"]  = [n.id for n in filter_service.filter_nodes(graph, "born >= 1990")]
-    results["filter_born==1995"]  = [n.id for n in filter_service.filter_nodes(graph, "born == 1995")]
-    results["filter_born<1970"]   = [n.id for n in filter_service.filter_nodes(graph, "born < 1970")]
-    results["filter_role==Sin"]   = [n.id for n in filter_service.filter_nodes(graph, "role == Sin")]
-    results["filter_name!=Marko"] = [n.id for n in filter_service.filter_nodes(graph, "name != Marko")]
-
-    # ── CHAINING: filter to search ────────────────────────────────
-    g2 = filter_service.filter_subgraph(graph, "born >= 1990")
-    g3 = search_service.search_subgraph(g2, "a")
-    results["chain_filter_then_search"] = [n.id for n in g3.nodes.values()]
-
-    # ── ERROR handling ────────────────────────────────────────────
-    try:
-        filter_service.filter_nodes(graph, "born >= notanumber")
-    except FilterTypeError as e:
-        results["type_error"] = str(e)
-
-    try:
-        filter_service.filter_nodes(graph, "this is not valid")
-    except FilterParseError as e:
-        results["parse_error"] = str(e)
-
-    return results
-
-
-@app.route("/workspace-test")
-def workspace():
-    plugin = loader.plugins['datasource']['yaml']
-
-    graph = plugin.convert_to_graph('test.yaml')
-
-    manager = WorkspaceManager(loader, InMemoryWorkspaceRepository())
-
-    id = manager.create_workspace('test', graph, 'yaml', 'block')
-
-    # manager.add_filter("born > 1995", id)
-    # manager.set_visualizer('simple', id)
-    #manager.set_filters(id, ["born > 1995"])
-    manager.set_visualizer(id, 'block')
-    graph_html = manager.get_render(id)
-   
-    return render_template('main-view.html', plugin_html=graph_html)
 
 @app.route("/plugins/available")
 def available():
@@ -238,7 +167,7 @@ def search_workspace(workspace_id):
         if not query:
             raise ValueError('Search query is required')
 
-        workspace_manager.set_search(query, workspace_id)
+        workspace_manager.add_search(query, workspace_id)
         graph_html = workspace_manager.get_render(workspace_id)
 
         return jsonify({'success': True, 'html': graph_html}), 200

@@ -18,8 +18,8 @@ class SearchGraphCommand(BaseCommand):
         query = ""
         for data in self.args.data:
             query += f"{data} "
-        query.strip()
-        workspace.set_search(query)
+        query = query.strip()
+        workspace.add_search(query)
         return f'SUCCESS'
 
 
