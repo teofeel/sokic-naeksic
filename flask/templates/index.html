@@ -9,6 +9,28 @@
 
 <body>
     {% include 'header.html' %}
+<div id="searchFilterBar" style="display:none;">
+    <div class="sf-bar">
+
+        <div class="sf-group">
+            <input type="text" id="searchInput" placeholder="Search nodes..." />
+            <button onclick="applySearch()">Search</button>
+        </div>
+
+        <div class="sf-group">
+            <input type="text" id="filterInput" placeholder="e.g. born >= 1990" />
+            <button onclick="applyFilter()">Filter</button>
+        </div>
+
+        <div class="sf-group">
+            <button class="sf-reset" onclick="resetWorkspace()">↺ Reset</button>
+        </div>
+
+        <div id="activeOps"></div>
+
+    </div>
+    <div id="sfError" class="sf-error" style="display:none;"></div>
+</div>
 
     {% include 'modal.html' %}
 
@@ -109,7 +131,149 @@
         body.scrollTop = body.scrollHeight;
       }
 
+const activeOperations = []; // { type: 'filter'|'search', label: string }
 
+function getWorkspaceId() {
+    return new URLSearchParams(window.location.search).get('workspaceId');
+}
+
+function showSFError(msg) {
+    const el = document.getElementById('sfError');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+}
+
+function renderActiveTags() {
+    const container = document.getElementById('activeOps');
+    container.innerHTML = activeOperations.map((op, i) =>
+        `<span class="op-tag ${op.type}" title="Click to remove" style="cursor:pointer" onclick="removeOp(${i})">
+            ${op.type === 'filter' ? '⚙' : '🔍'} ${op.label} ✕
+        </span>`
+    ).join('');
+}
+
+async function removeOp(index) {
+    const ops = [...activeOperations];
+    ops.splice(index, 1);
+    activeOperations.length = 0;
+
+    const workspaceId = getWorkspaceId();
+    await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/reset`, { method: 'PUT' });
+
+    for (const op of ops) {
+        if (op.type === 'filter') {
+            const formData = new FormData();
+            formData.append('filter', op.label);
+            const res = await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/filter`, {
+                method: 'PUT', body: formData
+            });
+            const result = await res.json();
+            if (result.success) activeOperations.push(op);
+        } else {
+            const formData = new FormData();
+            formData.append('query', op.label);
+            const res = await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/search`, {
+                method: 'PUT', body: formData
+            });
+            const result = await res.json();
+            if (result.success) activeOperations.push(op);
+        }
+    }
+
+    renderActiveTags();
+    await updateMainView(workspaceId);
+}
+
+async function applySearch(queryOverride) {
+    const workspaceId = getWorkspaceId();
+    if (!workspaceId) return;
+
+    const query = queryOverride || document.getElementById('searchInput').value.trim();
+    if (!query) return;
+
+    const formData = new FormData();
+    formData.append('query', query);
+
+    try {
+        const res = await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/search`, {
+            method: 'PUT', body: formData
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            showSFError('');
+            document.getElementById('searchInput').value = '';
+            activeOperations.push({ type: 'search', label: query });
+            renderActiveTags();
+            updateMainView(workspaceId);
+            appendCLILine(`Search applied: "${query}"`, 'output');
+        } else {
+            showSFError(result.error);
+        }
+    } catch (e) {
+        showSFError('Connection error');
+    }
+}
+
+async function applyFilter(queryOverride) {
+    const workspaceId = getWorkspaceId();
+    if (!workspaceId) return;
+
+    const query = queryOverride || document.getElementById('filterInput').value.trim();
+    if (!query) return;
+
+    const formData = new FormData();
+    formData.append('filter', query);
+
+    try {
+        const res = await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/filter`, {
+            method: 'PUT', body: formData
+        });
+        const result = await res.json();
+
+        if (!res.ok || !result.success) {
+            showSFError(`${result.type === 'type_error' ? 'Type error' : 'Parse error'}: ${result.error}`);
+            appendCLILine(`Filter error: ${result.error}`, 'error');
+            return;
+        }
+
+        showSFError('');
+        document.getElementById('filterInput').value = '';
+        activeOperations.push({ type: 'filter', label: query });
+        renderActiveTags();
+        await updateMainView(workspaceId);
+        appendCLILine(`Filter applied: "${query}"`, 'output');
+
+    } catch (e) {
+        showSFError('Connection error');
+    }
+}
+
+async function resetWorkspace(silent = false) {
+    const workspaceId = getWorkspaceId();
+    if (!workspaceId) return;
+
+    try {
+        const res = await fetch(`http://127.0.0.1:5000/workspace/${workspaceId}/reset`, {
+            method: 'PUT'
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            showSFError('');
+            activeOperations.length = 0;
+            renderActiveTags();
+            updateMainView(workspaceId);
+            if (!silent) appendCLILine('Graph reset to original', 'output');
+        }
+    } catch (e) {
+        if (!silent) showSFError('Connection error');
+    }
+}
+
+async function updateMainView(workspaceId) {
+    await loadViews(workspaceId);
+}
       async function loadAvailableVisualizers() {
         const selectElement = document.getElementsByClassName('select-styled')[0];
         const modalVisualizer = document.getElementById('modalVisualizer');
@@ -206,6 +370,12 @@
               if(stylesDropdown){
                 stylesDropdown.value = data.visualizer
               }
+              document.getElementById('searchFilterBar').style.display = 'block';
+              showSFError('');
+              activeOperations.length = 0;
+              (data.filters || []).forEach(f => activeOperations.push({ type: 'filter', label: f }));
+              if (data.search) activeOperations.push({ type: 'search', label: data.search });
+              renderActiveTags();
 
                 loadViews(id);
               // update everything else (filters, search,......)
