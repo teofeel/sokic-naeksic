@@ -59,7 +59,9 @@ def cli_command():
     cmd = request.args.get('command')
     workspace_id = request.args.get('workspace')
     active_workspace = workspace_manager.get_workspace(workspace_id)
-    return command_processor.process_command(cmd, active_workspace)
+    res = command_processor.process_command(cmd, active_workspace)
+    workspace_manager.repository.update(active_workspace)
+    return res
 
 @app.route('/workspace/views/<workspace_id>')
 def get_workspace_views(workspace_id):
@@ -121,7 +123,7 @@ def workspace():
     #manager.set_filters(id, ["born > 1995"])
     manager.set_visualizer(id, 'block')
     graph_html = manager.get_render(id)
-   
+
     return render_template('main-view.html', plugin_html=graph_html)
 
 @app.route("/plugins/available")

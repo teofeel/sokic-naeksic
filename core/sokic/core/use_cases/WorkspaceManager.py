@@ -14,7 +14,7 @@ class WorkspaceManager:
         self.plugin_loader = plugin_loader
         self.repository: WorkspaceRepository = repository
 
-    def create_workspace(self, name: str, graph: Graph, datasource_key: str, visualizer_key: str) -> str:
+    def create_workspace(self, name: str, graph: Graph, datasource_key: Optional[str], visualizer_key: Optional[str]) -> str:
         """
         Used to create a new workspace
         :param name: Name of the workspace
@@ -23,19 +23,21 @@ class WorkspaceManager:
         :param visualizer_key: String name of the visualizer plugin
         :return: ID of the new workspace
         """
-
-        datasource_plugin = self.plugin_loader.plugins['datasource'][datasource_key]
-        if datasource_plugin is None:
-            raise ValueError(f'Datasource plugin {datasource_key} not found')
-
-        visualizer_plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
-        if visualizer_plugin is None:
-            raise ValueError(f'Visualizer plugin {visualizer_key} not found')
-
         workspace = Workspace(name, graph)
 
-        workspace.set_datasource(datasource_plugin)
-        workspace.set_visualizer(visualizer_plugin)
+        if datasource_key:
+            datasource_plugin = self.plugin_loader.plugins['datasource'][datasource_key]
+            if datasource_plugin is None:
+                raise ValueError(f'Datasource plugin {datasource_key} not found')
+
+            workspace.set_datasource(datasource_plugin)
+
+        if visualizer_key:
+            visualizer_plugin = self.plugin_loader.plugins['visualizer'][visualizer_key]
+            if visualizer_plugin is None:
+                raise ValueError(f'Visualizer plugin {visualizer_key} not found')
+
+            workspace.set_visualizer(visualizer_plugin)
 
         self.repository.save(workspace)
 
@@ -202,6 +204,12 @@ class WorkspaceManager:
             return ""
 
         return workspace.get_search()
+
+    def flush(self, ws: Workspace) -> bool:
+        if not ws:
+            return False
+
+        return self.repository.update(ws)
 
     def reset_workspace(self, workspace_id: str) -> bool:
         workspace = self.repository.load_by_id(workspace_id)
