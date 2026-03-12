@@ -83,3 +83,5 @@ plugins/data_source_plugin_json/sokic_datasource_json.egg-info/PKG-INFO
 /plugins/data_source_plugin_json/sokic_datasource_json.egg-info/
 /plugins/data_source_plugin_json/build/
 /plugins/data_source_plugin_json/build/lib/
+/core/build/
+/core/sokic_core.egg-info/

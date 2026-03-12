@@ -19,8 +19,8 @@ class WorkspaceManager:
         Used to create a new workspace
         :param name: Name of the workspace
         :param graph: Graph object
-        :param datasource_key: String name of the datasource plugin
-        :param visualizer_key: String name of the visualizer plugin
+        :param datasource_key: String name of the datasource plugin [Optional]
+        :param visualizer_key: String name of the visualizer plugin [Optional]
         :return: ID of the new workspace
         """
         workspace = Workspace(name, graph)
@@ -57,7 +57,7 @@ class WorkspaceManager:
         return workspace.render()
 
 
-    def set_search(self, query: str, workspace_id: str):
+    def add_search(self, query: str, workspace_id: str):
         """
         Sets search to active workspace
         :param query: Query for the search
@@ -66,7 +66,7 @@ class WorkspaceManager:
         """
         workspace = self.repository.load_by_id(workspace_id)
         if workspace:
-            workspace.set_search(query)
+            workspace.add_search(query)
             self.repository.update(workspace)
 
 
@@ -206,6 +206,11 @@ class WorkspaceManager:
         return workspace.get_search()
 
     def flush(self, ws: Workspace) -> bool:
+        """
+        Used to save data of one workspace
+        :param ws: Workspace
+        :return: True if saved, otherwise False
+        """
         if not ws:
             return False
 
