@@ -15,3 +15,15 @@ To ensure the Graph and Bird View render correctly you must include the global s
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 ```
+
+You can generate graph with:
+Windows:
+```powershell
+python graph_generator.py
+```
+Linux:
+```terminal
+python3 graph_generator.py
+```
+
+
