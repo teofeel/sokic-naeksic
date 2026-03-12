@@ -365,29 +365,32 @@
 
 
     function _render() {
-    const root = document.getElementById('tree-root');
-    if (!root || !_rootId) return;
-    root.innerHTML = '';
-    const hasParent = new Set();
-    _graphData.links.forEach(l => {
-        const t = typeof l.target === 'object' ? l.target.id : l.target;
-        hasParent.add(t);
-    });
+        const root = document.getElementById('tree-root');
+        if (!root || !_rootId) return;
+        root.innerHTML = '';
 
-    const rootNodes = Object.keys(_nodeMap).filter(id => !hasParent.has(id));
+        const hasParent = new Set();
+        _graphData.links.forEach(l => {
+            const t = typeof l.target === 'object' ? l.target.id : l.target;
+            hasParent.add(t);
+        });
 
-    const actualRoots = rootNodes.length > 0 ? rootNodes : [_rootId];
+        let rootNodes = Object.keys(_nodeMap).filter(id => !hasParent.has(id));
 
-    actualRoots.forEach((rootId, i) => {
-        if (i > 0) {
-            const sep = document.createElement('li');
-            sep.className = 'tree-separator';
-            sep.innerHTML = '<span>─────────────</span>';
-            root.appendChild(sep);
+        if (_rootId && !rootNodes.includes(_rootId)) {
+            rootNodes.unshift(_rootId);
         }
-        root.appendChild(_buildItem(rootId, 0, new Set()));
-    });
-}
+
+        rootNodes.forEach((rootId, i) => {
+            if (i > 0) {
+                const sep = document.createElement('li');
+                sep.className = 'tree-separator';
+                sep.innerHTML = '<span>─────────────</span>';
+                root.appendChild(sep);
+            }
+            root.appendChild(_buildItem(rootId, 0, new Set()));
+        });
+    }
 
     function _buildItem(nodeId, depth, ancestorSet) {
         const node     = _nodeMap[nodeId];
