@@ -1,3 +1,4 @@
+from core.sokic.core.use_cases.Workspace import Workspace
 from core.sokic.core.use_cases.base_command import CommandArguments
 from core.sokic.core.use_cases.command_factory import CommandFactory
 
@@ -11,10 +12,10 @@ class CommandProcessor:
     def __init__(self) -> None:
         self._commandFactory = CommandFactory()
 
-    def process_command(self, command_str: str) -> str:
+    def process_command(self, command_str: str, active_workspace: Workspace) -> str:
         command_args = self.parse_arguments(command_str)
         command = self._commandFactory.create_command(command_args)
-        return command.execute()
+        return command.execute(active_workspace)
 
 
     def parse_arguments(self, command: str):
@@ -26,7 +27,9 @@ class CommandProcessor:
         data = {}
 
         for item in parts[1:]:
-            if "=" in item:
+            if command_name == "filter" or command_name == "search":
+                data[item] = item
+            elif "=" in item:
                 key, value = item.split("=", 1)
                 data[key] = self._convert_type(value)
 

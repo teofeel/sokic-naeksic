@@ -79,5 +79,7 @@ plugins/data_source_plugin_json/sokic_datasource_json.egg-info/entry_points.txt
 plugins/data_source_plugin_json/sokic_datasource_json.egg-info/requires.txt
 plugins/data_source_plugin_json/sokic_datasource_json.egg-info/SOURCES.txt
 plugins/data_source_plugin_json/sokic_datasource_json.egg-info/top_level.txt
+plugins/data_source_plugin_json/sokic_datasource_json.egg-info/PKG-INFO
 /plugins/data_source_plugin_json/sokic_datasource_json.egg-info/
 /plugins/data_source_plugin_json/build/
+/plugins/data_source_plugin_json/build/lib/

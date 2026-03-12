@@ -25,6 +25,8 @@ class CommandFactory:
         )
 
     def create_command(self, args: CommandArguments) -> BaseCommand:
+        if args.command_name == "help":
+            return HelpCommand(self._available_commands)
         command = next(
             (cmd for cmd in self._available_commands if cmd.command_name == args.command_name),
             NotFoundCommand(args.command_name)
@@ -44,7 +46,7 @@ class NotFoundCommand(BaseCommand):
     def required_args(self) -> list[str]:
         return []
 
-    def execute(self) -> str:
+    def execute(self, active_workspace) -> str:
         return f"ERROR - command not found: {self.command_name}"
 
 class HelpCommand(BaseCommand):
@@ -58,9 +60,9 @@ class HelpCommand(BaseCommand):
     def required_args(self) -> list[str]:
         return []
 
-    def execute(self) -> str:
-        lines = ["Available Commands:"]
+    def execute(self, active_workspace) -> str:
+        lines = ["Format: cmd-name arg-1=value arg2=value", "Available Commands:"]
         for cmd in self._commands:
-            req = f"Required: {', '.join(cmd.required_args)}" if cmd.required_args else "None"
+            req = f"Required: {', '.join(cmd.required_args)}" if cmd.required_args and isinstance(cmd.required_args, list) else "None"
             lines.append(f"- {cmd.command_name} ({req})")
         return "\n".join(lines)

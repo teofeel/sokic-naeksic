@@ -57,7 +57,9 @@ def test_visualizer():
 @app.route('/cli-command')
 def cli_command():
     cmd = request.args.get('command')
-    return command_processor.process_command(cmd)
+    workspace_id = request.args.get('workspace')
+    active_workspace = workspace_manager.get_workspace(workspace_id)
+    return command_processor.process_command(cmd, active_workspace)
 
 @app.route('/workspace/views/<workspace_id>')
 def get_workspace_views(workspace_id):

@@ -20,5 +20,5 @@ class BaseCommand(ABC):
         return []
 
     @abstractmethod
-    def execute(self) -> str:
+    def execute(self, active_workspace: Workspace) -> str:
         pass

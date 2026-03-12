@@ -76,22 +76,26 @@
         if (cliOpen) setTimeout(() => document.getElementById('cliInput').focus(), 260);
       }
 
-      function handleCLI(e) {
+    async function handleCLI(e) {
         if (e.key !== 'Enter') return;
 
         const input = document.getElementById('cliInput');
         const cmd = input.value.trim();
+        const workspaceElement = document.getElementById('workspaceSelect');
 
-        if (!cmd) return;
+        if (!cmd || !workspaceElement) return;
 
+        const workspaceId = workspaceElement.value;
         input.value = '';
 
         appendCLILine('>>> ' + cmd, '');
 
-        const response = await fetch(`/cli-command?command=${encodeURIComponent(cmd)}`);
+        const response = await fetch(`/cli-command?command=${encodeURIComponent(cmd)}&workspace=${encodeURIComponent(workspaceId)}`);
         const resultText = await response.text();
+
+        await loadViews(workspaceId);
         appendCLILine(resultText, 'output');
-      }
+    }
 
       function appendCLILine(text, type) {
         const body = document.getElementById('cliBody');
