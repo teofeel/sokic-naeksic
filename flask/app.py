@@ -1,9 +1,9 @@
-from flask import Flask, render_template_string, render_template, request, jsonify
-from sokic.core.use_cases.InMemoryWorkspaceRepository import InMemoryWorkspaceRepository
-from sokic.core.use_cases.WorkspaceManager import WorkspaceManager
+from flask import Flask, render_template, request, jsonify
+from sokic.core.use_cases.in_memory_workspace_repository import InMemoryWorkspaceRepository
+from sokic.core.use_cases.workspace_manager import WorkspaceManager
 from sokic.core.use_cases.command_processor import CommandProcessor
 from sokic.core.use_cases.plugin_loader import PluginLoader
-from sokic.core.use_cases.Workspace import Workspace
+from sokic.core.use_cases.workspace import Workspace
 from sokic.core.use_cases import SearchServiceImpl, FilterServiceImpl, FilterParseError, FilterTypeError
 from sokic.core.use_cases.view_renderer import ViewRenderer
 from utils.workspace import create_default_workspace

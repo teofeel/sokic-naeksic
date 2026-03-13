@@ -1,8 +1,7 @@
-from sokic.api.services.DataSourcePlugin import DataSourcePlugin
-from sokic.api.services.Plugin import Plugin
-from sokic.api.services.VisualizerPlugin import VisualizerPlugin
+from sokic.api.services.data_source_plugin import DataSourcePlugin
+from sokic.api.services.visualizer_plugin import VisualizerPlugin
 from importlib.metadata import entry_points
-from typing import Any, Union, Optional, List
+from typing import Any, Union, List
 from collections import defaultdict
 
 class PluginLoader:

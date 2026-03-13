@@ -1,10 +1,7 @@
 import collections
-from collections import deque
 
-from sokic.api.services.DataSourcePlugin import DataSourcePlugin
+from sokic.api.services.data_source_plugin import DataSourcePlugin
 from sokic.api.models.graph import Graph
-from sokic.api.models.graph_direction import GraphDirection
-from sokic.api.models.graph_cycle import GraphCycle
 from sokic.api.models.node import Node
 from sokic.api.models.edge import Edge
 import yaml

@@ -1,10 +1,9 @@
 from typing import Dict, Any
-import json
 
 from sokic.api.models.graph import Graph
 from sokic.api.models.node import Node
 from sokic.api.models.edge import Edge
-from sokic.api.services.VisualizerPlugin import VisualizerPlugin
+from sokic.api.services.visualizer_plugin import VisualizerPlugin
 
 
 class SimpleVisualizer(VisualizerPlugin):

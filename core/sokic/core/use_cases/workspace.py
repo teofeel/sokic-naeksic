@@ -1,6 +1,6 @@
 from sokic.api.services import DataSourcePlugin, VisualizerPlugin
 from sokic.api.models import Graph
-from core.sokic.core.use_cases.filter_service_impl import FilterServiceImpl, _parse_filter_query
+from core.sokic.core.use_cases.filter_service_impl import FilterServiceImpl
 from core.sokic.core.use_cases.search_service_impl import SearchServiceImpl
 from typing import Optional, List
 import uuid

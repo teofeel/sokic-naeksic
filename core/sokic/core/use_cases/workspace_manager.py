@@ -1,9 +1,7 @@
-from sokic.api.services.WorkspaceRepository import WorkspaceRepository
+from sokic.api.services.workspace_repository import WorkspaceRepository
 from sokic.api.models import Graph
-
-#from api.services import DataSourcePlugin
 from core.sokic.core.use_cases.plugin_loader import PluginLoader
-from core.sokic.core.use_cases.Workspace import Workspace
+from core.sokic.core.use_cases.workspace import Workspace
 from typing import List, Optional
 
 class WorkspaceManager:

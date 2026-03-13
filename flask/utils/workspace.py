@@ -1,4 +1,4 @@
-from core.sokic.core.use_cases.WorkspaceManager import WorkspaceManager
+from core.sokic.core.use_cases.workspace_manager import WorkspaceManager
 
 def create_default_workspace(workspace_manager: WorkspaceManager):
     workspaces = workspace_manager.get_all_workspaces_metadata()
