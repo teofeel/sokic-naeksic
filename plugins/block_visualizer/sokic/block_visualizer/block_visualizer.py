@@ -38,6 +38,8 @@ class BlockVisualizer(VisualizerPlugin):
 
         graph_data = self._graph_to_json(graph)
 
+        print("direktovan: " + str(graph.is_directed()))
+
         return f"""
         <div id="graph-viewport" style="width: 100%; height: 100%; position: absolute; inset: 0;"></div>
         <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -53,6 +55,22 @@ class BlockVisualizer(VisualizerPlugin):
                     .append("svg")
                     .attr("width", "100%")
                     .attr("height", "100%");
+                    
+                const defs = svg.append("defs");
+
+                defs.append("marker")
+                    .attr("id", "arrowhead")
+                    .attr("viewBox", "-0 -5 10 10")
+                    .attr("refX", 5)
+                    .attr("refY", 0)
+                    .attr("orient", "auto")
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("xalign", "center")
+                    .append("path")
+                    .attr("d", "M 0,-5 L 10 ,0 L 0,5")
+                    .attr("fill", "#000")
+                    .style("stroke", "none");
 
                 const simulation = d3.forceSimulation(data.nodes)
                     .force("link", d3.forceLink(data.links).id(d => d.id).distance(150))
@@ -60,11 +78,15 @@ class BlockVisualizer(VisualizerPlugin):
                     .force("center", d3.forceCenter(width / 2, height / 2));
 
                 const link = svg.append("g")
-                    .selectAll("line")
-                    .data(data.links)
-                    .join("line")
-                    .attr("stroke", "#999")
-                    .attr("stroke-width", 2);
+                            .selectAll("path")
+                            .data(data.links)
+                            .join("path")
+                            .attr("stroke", "#000")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none")
+                    
+                if ({1 if graph.is_directed() else 0})
+                    link.attr("marker-mid", "url(#arrowhead)");
 
                 const node = svg.append("g")
                     .selectAll("g")
@@ -111,6 +133,8 @@ class BlockVisualizer(VisualizerPlugin):
                         const g = d3.select(this.parentNode);
                         const bbox = g.select("text").node().getBBox();
                         const padding = 10;
+                        
+                        
 
                         d3.select(this)
                             .attr("x", bbox.x - padding)
@@ -123,10 +147,11 @@ class BlockVisualizer(VisualizerPlugin):
                     }});
 
                 simulation.on("tick", () => {{
-                    link.attr("x1", d => d.source.x)
-                        .attr("y1", d => d.source.y)
-                        .attr("x2", d => d.target.x)
-                        .attr("y2", d => d.target.y);
+                    link.attr("d", d => {{
+                        const mx = (d.source.x + d.target.x) / 2;
+                        const my = (d.source.y + d.target.y) / 2;
+                        return `M ${{d.source.x}},${{d.source.y}} L ${{mx}},${{my}} L ${{d.target.x}},${{d.target.y}}`;
+                    }});
 
                     node.attr("transform", d => `translate(${{d.x}}, ${{d.y}})`);
                 }});
