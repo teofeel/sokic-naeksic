@@ -1,6 +1,6 @@
 from flask import render_template
 
-from core.sokic.core.use_cases.Workspace import Workspace
+from core.sokic.core.use_cases.workspace import Workspace
 
 
 class ViewRenderer:

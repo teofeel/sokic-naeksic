@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, Any
 
-from core.sokic.core.use_cases.Workspace import Workspace
+from core.sokic.core.use_cases.workspace import Workspace
 
 
 @dataclass

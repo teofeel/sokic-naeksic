@@ -8,8 +8,7 @@ name="sokic-core"
 version = "0.1"
 description = "Sokic Graph API"
 dependencies = [
-    "sokic-api",
-    "sokic-datasource-yaml"
+    "sokic-api"
 ]
 requires-python = ">=3.10"
 

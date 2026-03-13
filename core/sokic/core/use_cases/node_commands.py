@@ -1,6 +1,6 @@
 from sokic.api.models import Node
 
-from core.sokic.core.use_cases.Workspace import Workspace
+from core.sokic.core.use_cases.workspace import Workspace
 from core.sokic.core.use_cases.base_command import BaseCommand, CommandArguments
 
 

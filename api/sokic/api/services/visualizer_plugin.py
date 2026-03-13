@@ -4,7 +4,7 @@ from typing import Dict, Any
 from sokic.api.models.graph import Graph
 from sokic.api.models.node import Node
 from sokic.api.models.edge import Edge
-from sokic.api.services.Plugin import Plugin
+from sokic.api.services.plugin import Plugin
 import abc
 
 
