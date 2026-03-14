@@ -198,6 +198,19 @@
                     TreeView.selectNode(d.id);
                 }
             });
+
+            const edges = zoomLayer.selectAll("line, path");
+
+            edges.on("mouseenter", function(event, d) {
+                const hasExtraData = d && Object.keys(d).some(k =>
+                    !['id', 'source', 'target', 'index'].includes(k)
+                );
+                showTooltip(d, tooltip, this);
+            }).on("mousemove", function(event) {
+                setTooltipPosition(tooltip, event);
+            }).on("mouseleave", function() {
+                removeTooltip(tooltip, this);
+            });
         }
                 window.onTreeNodeSelected = function(nodeId) {
             zoomLayer.selectAll("g").each(function(d) {
