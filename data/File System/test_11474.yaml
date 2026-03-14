@@ -1,0 +1,1277 @@
+'@id': node_1
+name: backup.tar.gz
+type: executable
+permissions: rw-r--r--
+size_mb: 1024
+children:
+- '@id': node_2
+  name: script.py
+  type: directory
+  permissions: r--r--r--
+  size_mb: 500
+  children:
+  - '@id': node_3
+    type: executable
+    permissions: rwx------
+    size_mb: 1024
+    name: backup.tar.gz
+    children:
+    - '@id': node_17
+      type: file
+      permissions: rwxr-xr-x
+      size_mb: 15
+      name: data.csv
+      children:
+      - '@id': node_23
+        type: file
+        permissions: r--r--r--
+        size_mb: 15
+        name: script.py
+        children:
+        - '@id': node_61
+          name: backup.tar.gz
+          type: file
+          permissions: rw-r--r--
+          size_mb: 1024
+          children:
+          - '@id': node_87
+            name: backup.tar.gz
+            type: directory
+            permissions: rwxr-xr-x
+            size_mb: 1
+            children:
+            - '@ref': node_102
+          - '@id': node_135
+            type: executable
+            size_mb: 500
+            name: bin
+            children:
+            - '@id': node_154
+              name: documents
+              type: executable
+              permissions: r--r--r--
+              children:
+              - '@id': node_204
+                name: config.yaml
+                permissions: rwx------
+                size_mb: 500
+            - '@id': node_173
+              name: documents
+              type: archive
+              permissions: r--r--r--
+            - '@id': node_228
+              name: backup.tar.gz
+              type: file
+              permissions: rwxr-xr-x
+              size_mb: 1
+          - '@id': node_192
+            name: bin
+            type: archive
+            permissions: rw-r--r--
+            children:
+            - '@id': node_233
+              name: user
+              type: file
+              size_mb: 1024
+        - '@ref': node_45
+      - '@ref': node_12
+      - '@id': node_77
+        type: directory
+        permissions: r--r--r--
+        size_mb: 500
+        name: documents
+        children:
+        - '@id': node_94
+          name: config.yaml
+          size_mb: 1024
+          children:
+          - '@id': node_201
+            name: documents
+            type: archive
+            permissions: rwx------
+          - '@id': node_230
+            name: user
+            permissions: r--r--r--
+            size_mb: 1
+        - '@id': node_97
+          name: user
+          type: file
+          permissions: rwxr-xr-x
+          children:
+          - '@ref': node_41
+          - '@id': node_110
+            name: data.csv
+            type: executable
+            permissions: r--r--r--
+            size_mb: 1024
+          - '@id': node_141
+            name: documents
+            permissions: rw-r--r--
+            size_mb: 15
+    - '@id': node_18
+      type: archive
+      permissions: rwx------
+      size_mb: 15
+      name: data.csv
+      children:
+      - '@id': node_19
+        name: config.yaml
+        type: executable
+        size_mb: 120
+        children:
+        - '@id': node_25
+          name: bin
+          type: archive
+          permissions: rw-r--r--
+          size_mb: 0
+          children:
+          - '@ref': node_14
+        - '@id': node_32
+          name: system
+          type: executable
+          permissions: r--r--r--
+          size_mb: 15
+          children:
+          - '@id': node_36
+            name: config.yaml
+            type: file
+            permissions: rwxr-xr-x
+            size_mb: 0
+            children:
+            - '@ref': node_3
+            - '@id': node_80
+              name: documents
+              type: archive
+              permissions: rw-r--r--
+              children:
+              - '@id': node_81
+                name: user
+                permissions: rwx------
+                children:
+                - '@ref': node_64
+                - '@id': node_125
+                  name: backup.tar.gz
+                  type: executable
+                  permissions: r--r--r--
+                  size_mb: 120
+                  children:
+                  - '@ref': node_70
+          - '@id': node_159
+            type: file
+            size_mb: 15
+            name: user
+            children:
+            - '@id': node_202
+              name: script.py
+              permissions: rwxr-xr-x
+            - '@ref': node_161
+        - '@id': node_33
+          name: script.py
+          type: directory
+          permissions: rwxr-xr-x
+          size_mb: 0
+          children:
+          - '@id': node_40
+            name: config.yaml
+            type: archive
+            permissions: r--r--r--
+            size_mb: 0
+            children:
+            - '@id': node_56
+              name: system
+              type: file
+              size_mb: 0
+              children:
+              - '@id': node_57
+                name: config.yaml
+                type: directory
+                permissions: rwxr-xr-x
+                children:
+                - '@id': node_75
+                  name: config.yaml
+                  type: executable
+                  permissions: r--r--r--
+                  size_mb: 500
+                  children:
+                  - '@id': node_112
+                    name: system
+                    type: file
+                    size_mb: 120
+                    children:
+                    - '@id': node_166
+                      name: system
+                      type: file
+                      permissions: rwx------
+                  - '@id': node_114
+                    name: backup.tar.gz
+                    type: directory
+                    permissions: rw-r--r--
+                    size_mb: 1
+                    children:
+                    - '@id': node_127
+                      name: config.yaml
+                      permissions: rwx------
+                      children:
+                      - '@id': node_168
+                        type: directory
+                        permissions: rwx------
+                        size_mb: 1
+                        name: backup.tar.gz
+                        children:
+                        - '@id': node_198
+                          name: backup.tar.gz
+                          type: file
+                          permissions: r--r--r--
+                          size_mb: 15
+                        - '@id': node_221
+                          name: user
+                          permissions: rw-r--r--
+                          size_mb: 1024
+                    - '@id': node_163
+                      name: config.yaml
+                      type: directory
+                      permissions: rwxr-xr-x
+                      size_mb: 500
+                  - '@id': node_124
+                    permissions: rwxr-xr-x
+                    size_mb: 0
+                    name: backup.tar.gz
+                - '@id': node_89
+                  type: archive
+                  size_mb: 1024
+                  name: system
+                  children:
+                  - '@id': node_200
+                    type: executable
+                    permissions: rw-r--r--
+                    size_mb: 500
+                    name: bin
+                  - '@id': node_249
+                    name: data.csv
+                    type: directory
+                    permissions: rwxr-xr-x
+                    size_mb: 500
+                - '@id': node_93
+                  name: config.yaml
+                  type: executable
+                  size_mb: 15
+                  children:
+                  - '@id': node_161
+                    type: directory
+                    permissions: rw-r--r--
+                    size_mb: 0
+                    name: backup.tar.gz
+                - '@id': node_139
+                  name: config.yaml
+                  size_mb: 15
+                  children:
+                  - '@id': node_210
+                    type: executable
+                    size_mb: 1
+                    name: documents
+                - '@id': node_195
+                  name: bin
+                  type: archive
+                  permissions: rw-r--r--
+                  size_mb: 1
+                - '@id': node_199
+                  name: system
+                  type: executable
+                  size_mb: 500
+                - '@ref': node_106
+              - '@id': node_142
+                name: script.py
+                type: directory
+                size_mb: 500
+                children:
+                - '@id': node_227
+                  name: script.py
+                  type: executable
+                  permissions: rwxr-xr-x
+                  size_mb: 120
+            - '@id': node_82
+              name: config.yaml
+              type: file
+              permissions: rwx------
+              children:
+              - '@id': node_140
+                name: config.yaml
+                type: file
+                permissions: rw-r--r--
+                size_mb: 1024
+              - '@id': node_240
+                name: system
+                permissions: rwxr-xr-x
+                size_mb: 120
+            - '@id': node_99
+              name: system
+              type: directory
+              permissions: r--r--r--
+              size_mb: 15
+            - '@id': node_156
+              type: archive
+              permissions: rwx------
+              size_mb: 500
+              name: system
+              children:
+              - '@ref': node_87
+            - '@id': node_171
+              type: executable
+              permissions: r--r--r--
+              size_mb: 15
+              name: system
+          - '@ref': node_1
+          - '@id': node_85
+            type: executable
+            permissions: r--r--r--
+            size_mb: 0
+            name: system
+            children:
+            - '@id': node_102
+              name: bin
+              permissions: rwx------
+              size_mb: 1
+      - '@id': node_29
+        name: bin
+        type: archive
+        permissions: r--r--r--
+        size_mb: 1024
+        children:
+        - '@id': node_30
+          name: user
+          size_mb: 0
+          children:
+          - '@id': node_48
+            name: documents
+            type: file
+            permissions: rwx------
+            size_mb: 1024
+            children:
+            - '@id': node_58
+              name: config.yaml
+              type: directory
+              permissions: rw-r--r--
+              size_mb: 1
+              children:
+              - '@id': node_101
+                name: backup.tar.gz
+                type: file
+                permissions: rwx------
+                size_mb: 1024
+                children:
+                - '@id': node_109
+                  name: backup.tar.gz
+                  type: directory
+                  permissions: r--r--r--
+                  size_mb: 1024
+                  children:
+                  - '@id': node_196
+                    name: data.csv
+                    type: executable
+                    size_mb: 500
+            - '@id': node_67
+              name: bin
+              type: directory
+              permissions: rw-r--r--
+              size_mb: 15
+              children:
+              - '@ref': node_59
+            - '@id': node_188
+              name: user
+              type: archive
+              permissions: r--r--r--
+              size_mb: 500
+            - '@ref': node_63
+        - '@id': node_31
+          name: documents
+          type: directory
+          permissions: rwx------
+          size_mb: 0
+          children:
+          - '@id': node_44
+            name: bin
+            permissions: rwx------
+            size_mb: 15
+            children:
+            - '@id': node_126
+              name: documents
+              type: directory
+              children:
+              - '@id': node_131
+                name: user
+                type: directory
+                permissions: rwxr-xr-x
+                children:
+                - '@ref': node_73
+                - '@id': node_158
+                  name: user
+                  type: directory
+                  size_mb: 1
+              - '@ref': node_66
+            - '@id': node_179
+              name: system
+              type: file
+              size_mb: 120
+              children:
+              - '@ref': node_10
+              - '@id': node_245
+                name: backup.tar.gz
+                type: archive
+        - '@id': node_49
+          name: system
+          permissions: rw-r--r--
+          size_mb: 120
+          children:
+          - '@ref': node_105
+          - '@id': node_130
+            name: script.py
+            type: executable
+            permissions: rwxr-xr-x
+            size_mb: 500
+            children:
+            - '@id': node_191
+              name: documents
+              type: executable
+              size_mb: 1
+              children:
+              - '@id': node_208
+                name: user
+                type: directory
+                permissions: r--r--r--
+                size_mb: 1
+              - '@id': node_231
+                name: system
+                type: directory
+                permissions: rwxr-xr-x
+                size_mb: 1024
+        - '@id': node_88
+          name: data.csv
+          type: directory
+          permissions: r--r--r--
+        - '@id': node_147
+          name: bin
+          type: archive
+          permissions: rw-r--r--
+          size_mb: 500
+          children:
+          - '@id': node_160
+            name: script.py
+            type: directory
+            permissions: r--r--r--
+            size_mb: 120
+        - '@id': node_246
+          type: directory
+          permissions: rw-r--r--
+          size_mb: 15
+          name: data.csv
+      - '@id': node_43
+        name: data.csv
+        type: executable
+        permissions: rwxr-xr-x
+        size_mb: 1024
+        children:
+        - '@id': node_63
+          name: system
+          children:
+          - '@id': node_84
+            name: backup.tar.gz
+            type: directory
+            permissions: rw-r--r--
+            size_mb: 0
+            children:
+            - '@id': node_138
+              name: documents
+              type: executable
+              permissions: r--r--r--
+              size_mb: 15
+              children:
+              - '@ref': node_84
+            - '@id': node_145
+              type: file
+              permissions: rwxr-xr-x
+              size_mb: 120
+              name: documents
+          - '@id': node_226
+            name: system
+            type: executable
+            permissions: rwxr-xr-x
+            children:
+            - '@id': node_243
+              type: directory
+              name: user
+        - '@id': node_70
+          name: data.csv
+          type: archive
+          size_mb: 500
+          children:
+          - '@id': node_174
+            size_mb: 120
+            name: backup.tar.gz
+            children:
+            - '@id': node_216
+              name: documents
+              permissions: rwxr-xr-x
+              children:
+              - '@id': node_244
+                name: data.csv
+                type: file
+                permissions: rwxr-xr-x
+                size_mb: 120
+            - '@id': node_220
+              name: data.csv
+              type: archive
+              permissions: rwx------
+        - '@id': node_72
+          type: archive
+          permissions: r--r--r--
+          size_mb: 15
+          name: user
+          children:
+          - '@id': node_95
+            type: executable
+            name: data.csv
+            children:
+            - '@id': node_164
+              name: script.py
+              type: executable
+              permissions: rw-r--r--
+              size_mb: 500
+            - '@id': node_165
+              type: archive
+              permissions: rw-r--r--
+              size_mb: 500
+              name: bin
+        - '@ref': node_135
+        - '@id': node_235
+          name: user
+          size_mb: 15
+      - '@id': node_193
+        name: bin
+        type: file
+        permissions: rw-r--r--
+        size_mb: 1024
+    - '@id': node_27
+      name: user
+      type: directory
+      permissions: rwx------
+      size_mb: 1
+      children:
+      - '@id': node_34
+        name: user
+        permissions: rw-r--r--
+        size_mb: 0
+        children:
+        - '@id': node_54
+          type: file
+          size_mb: 1024
+          name: backup.tar.gz
+          children:
+          - '@id': node_55
+            permissions: rwx------
+            size_mb: 0
+            name: user
+            children:
+            - '@id': node_68
+              name: user
+              type: executable
+              permissions: r--r--r--
+              children:
+              - '@ref': node_31
+              - '@id': node_108
+                type: executable
+                permissions: rwxr-xr-x
+                size_mb: 120
+                name: data.csv
+              - '@ref': node_33
+            - '@id': node_132
+              name: user
+              size_mb: 0
+            - '@id': node_232
+              name: backup.tar.gz
+              type: executable
+              permissions: rwxr-xr-x
+              size_mb: 1
+            - '@id': node_234
+              name: data.csv
+              type: archive
+              permissions: r--r--r--
+              size_mb: 0
+          - '@ref': node_14
+          - '@id': node_96
+            permissions: rwx------
+            size_mb: 1024
+            name: script.py
+            children:
+            - '@id': node_121
+              name: bin
+              type: archive
+              permissions: rwxr-xr-x
+              size_mb: 0
+              children:
+              - '@id': node_155
+                name: data.csv
+                type: file
+                permissions: rw-r--r--
+                children:
+                - '@ref': node_146
+                - '@id': node_183
+                  name: user
+                  permissions: rwxr-xr-x
+                  size_mb: 15
+              - '@ref': node_92
+            - '@id': node_207
+              name: bin
+              type: file
+              permissions: r--r--r--
+              size_mb: 1024
+              children:
+              - '@ref': node_204
+            - '@id': node_214
+              name: bin
+              type: executable
+              permissions: r--r--r--
+              size_mb: 120
+          - '@ref': node_69
+          - '@id': node_118
+            type: executable
+            size_mb: 15
+            name: data.csv
+            children:
+            - '@id': node_222
+              name: system
+              type: directory
+              size_mb: 1024
+          - '@id': node_170
+            name: bin
+            type: file
+            size_mb: 1024
+            children:
+            - '@ref': node_116
+        - '@id': node_98
+          name: config.yaml
+          type: file
+          permissions: rwxr-xr-x
+          size_mb: 120
+      - '@id': node_50
+        type: directory
+        permissions: rw-r--r--
+        size_mb: 15
+        name: script.py
+        children:
+        - '@id': node_60
+          name: documents
+          type: file
+          permissions: rw-r--r--
+          size_mb: 15
+          children:
+          - '@id': node_100
+            name: user
+            type: file
+            size_mb: 500
+            children:
+            - '@id': node_203
+              name: backup.tar.gz
+              type: archive
+              size_mb: 1
+          - '@id': node_150
+            name: backup.tar.gz
+            permissions: r--r--r--
+            size_mb: 500
+            children:
+            - '@id': node_250
+              name: documents
+              type: executable
+              permissions: rwx------
+              size_mb: 1024
+        - '@id': node_116
+          name: config.yaml
+          permissions: rwx------
+          size_mb: 1
+          children:
+          - '@id': node_119
+            name: script.py
+            permissions: rwx------
+            children:
+            - '@id': node_205
+              name: script.py
+              type: file
+              permissions: rwx------
+              size_mb: 15
+        - '@id': node_128
+          name: data.csv
+          type: executable
+          permissions: rwxr-xr-x
+          size_mb: 500
+    - '@id': node_143
+      name: config.yaml
+      type: archive
+      permissions: rw-r--r--
+      size_mb: 1024
+      children:
+      - '@id': node_224
+        name: data.csv
+        type: file
+        size_mb: 120
+  - '@id': node_4
+    name: bin
+    type: directory
+    size_mb: 120
+    children:
+    - '@id': node_6
+      name: bin
+      type: archive
+      permissions: rw-r--r--
+      size_mb: 500
+      children:
+      - '@ref': node_25
+      - '@id': node_37
+        type: executable
+        permissions: rw-r--r--
+        name: config.yaml
+        children:
+        - '@ref': node_117
+        - '@id': node_178
+          name: script.py
+          permissions: rw-r--r--
+          size_mb: 15
+      - '@ref': node_5
+      - '@id': node_53
+        name: documents
+        type: directory
+        children:
+        - '@id': node_83
+          name: bin
+          permissions: rwxr-xr-x
+          size_mb: 0
+          children:
+          - '@id': node_90
+            name: system
+            type: executable
+            size_mb: 500
+            children:
+            - '@id': node_175
+              name: data.csv
+              type: directory
+              permissions: r--r--r--
+            - '@id': node_215
+              name: bin
+              type: directory
+              permissions: rwx------
+          - '@id': node_182
+            name: documents
+            permissions: rw-r--r--
+            size_mb: 1
+            children:
+            - '@id': node_239
+              name: script.py
+              type: archive
+              permissions: rw-r--r--
+              size_mb: 15
+        - '@id': node_86
+          name: system
+          permissions: rwx------
+        - '@id': node_91
+          name: data.csv
+          type: directory
+          size_mb: 120
+        - '@id': node_162
+          name: system
+          permissions: rwx------
+          size_mb: 1024
+          children:
+          - '@id': node_167
+            type: directory
+            permissions: rw-r--r--
+            size_mb: 500
+            name: backup.tar.gz
+          - '@id': node_197
+            name: documents
+            type: directory
+            permissions: rwxr-xr-x
+            size_mb: 500
+    - '@id': node_24
+      name: config.yaml
+      type: archive
+      permissions: r--r--r--
+      size_mb: 1
+    - '@ref': node_18
+    - '@ref': node_100
+    - '@id': node_149
+      name: config.yaml
+      type: file
+  - '@id': node_5
+    name: documents
+    type: directory
+    permissions: rw-r--r--
+    size_mb: 0
+    children:
+    - '@id': node_15
+      name: bin
+      type: file
+      permissions: rwx------
+  - '@id': node_8
+    name: config.yaml
+    type: directory
+    size_mb: 1
+    children:
+    - '@id': node_10
+      name: backup.tar.gz
+      type: file
+      permissions: rwxr-xr-x
+      size_mb: 15
+      children:
+      - '@id': node_113
+        name: documents
+        type: directory
+        permissions: rwx------
+        children:
+        - '@id': node_186
+          name: user
+          permissions: r--r--r--
+          size_mb: 0
+    - '@id': node_12
+      name: bin
+      type: archive
+      size_mb: 120
+      children:
+      - '@ref': node_11
+      - '@id': node_26
+        name: documents
+        type: archive
+        permissions: rwx------
+        size_mb: 1
+      - '@id': node_41
+        type: directory
+        size_mb: 1
+        name: config.yaml
+        children:
+        - '@id': node_219
+          type: archive
+          size_mb: 1024
+          name: bin
+      - '@id': node_65
+        name: data.csv
+        type: directory
+        permissions: rwx------
+        size_mb: 1
+      - '@id': node_104
+        name: data.csv
+        type: executable
+        permissions: r--r--r--
+        size_mb: 500
+        children:
+        - '@id': node_117
+          name: system
+          permissions: rwx------
+          size_mb: 500
+        - '@id': node_217
+          name: backup.tar.gz
+          type: file
+          permissions: rwxr-xr-x
+          size_mb: 0
+          children:
+          - '@id': node_237
+            name: bin
+            type: executable
+            size_mb: 15
+      - '@id': node_148
+        name: documents
+        type: file
+        permissions: rwxr-xr-x
+        size_mb: 500
+        children:
+        - '@ref': node_51
+    - '@id': node_111
+      name: system
+      type: directory
+      permissions: rwxr-xr-x
+      size_mb: 0
+  - '@ref': node_49
+  - '@id': node_74
+    type: executable
+    permissions: rwx------
+    size_mb: 1
+    name: backup.tar.gz
+    children:
+    - '@ref': node_110
+    - '@id': node_134
+      name: backup.tar.gz
+      type: directory
+      permissions: rwxr-xr-x
+      size_mb: 500
+      children:
+      - '@id': node_136
+        type: executable
+        permissions: r--r--r--
+        size_mb: 0
+        name: script.py
+      - '@id': node_212
+        name: documents
+        type: executable
+        permissions: rw-r--r--
+        size_mb: 500
+- '@id': node_7
+  name: config.yaml
+  type: executable
+  size_mb: 120
+  children:
+  - '@id': node_14
+    name: backup.tar.gz
+    type: directory
+    permissions: r--r--r--
+    size_mb: 500
+    children:
+    - '@id': node_52
+      type: file
+      size_mb: 0
+      name: bin
+      children:
+      - '@id': node_64
+        name: script.py
+        permissions: rwxr-xr-x
+        size_mb: 1
+        children:
+        - '@id': node_157
+          name: user
+          size_mb: 1
+      - '@id': node_177
+        name: config.yaml
+        permissions: r--r--r--
+        size_mb: 1
+    - '@id': node_66
+      name: documents
+      permissions: rwxr-xr-x
+      size_mb: 0
+    - '@id': node_107
+      type: archive
+      permissions: r--r--r--
+      size_mb: 15
+      name: script.py
+  - '@id': node_47
+    name: data.csv
+    type: archive
+    size_mb: 120
+    children:
+    - '@id': node_92
+      name: data.csv
+      type: executable
+      permissions: rw-r--r--
+      children:
+      - '@id': node_151
+        name: config.yaml
+        type: executable
+        size_mb: 0
+        children:
+        - '@id': node_172
+          name: backup.tar.gz
+          children:
+          - '@ref': node_106
+        - '@id': node_181
+          type: directory
+          permissions: rwxr-xr-x
+          name: config.yaml
+          children:
+          - '@id': node_248
+            name: backup.tar.gz
+            type: file
+            size_mb: 15
+  - '@id': node_69
+    name: system
+    type: directory
+    size_mb: 1024
+    children:
+    - '@id': node_103
+      name: user
+      type: archive
+      children:
+      - '@id': node_105
+        name: config.yaml
+        type: directory
+        permissions: rwxr-xr-x
+    - '@id': node_236
+      name: bin
+      type: directory
+      size_mb: 1
+- '@id': node_9
+  type: archive
+  permissions: rwxr-xr-x
+  size_mb: 1024
+  name: script.py
+  children:
+  - '@id': node_78
+    name: script.py
+    type: archive
+    size_mb: 500
+    children:
+    - '@id': node_129
+      type: archive
+      permissions: rwx------
+      size_mb: 1
+      name: script.py
+      children:
+      - '@ref': node_95
+      - '@id': node_229
+        name: script.py
+        type: file
+        permissions: rwxr-xr-x
+        size_mb: 500
+  - '@id': node_123
+    name: config.yaml
+    type: directory
+    permissions: rwxr-xr-x
+    size_mb: 500
+  - '@id': node_137
+    name: backup.tar.gz
+    type: archive
+    permissions: r--r--r--
+    children:
+    - '@id': node_185
+      name: user
+      type: archive
+      permissions: r--r--r--
+      children:
+      - '@id': node_238
+        name: system
+        type: file
+        permissions: rwx------
+        size_mb: 500
+      - '@id': node_247
+        name: user
+        type: directory
+        size_mb: 1024
+  - '@id': node_241
+    name: data.csv
+    type: file
+    permissions: rwxr-xr-x
+    size_mb: 500
+- '@id': node_11
+  name: user
+  type: file
+  permissions: rwx------
+  children:
+  - '@ref': node_1
+  - '@id': node_13
+    name: user
+    permissions: rw-r--r--
+    size_mb: 1024
+    children:
+    - '@id': node_16
+      name: user
+      type: archive
+      permissions: r--r--r--
+      size_mb: 0
+      children:
+      - '@id': node_176
+        name: config.yaml
+        type: archive
+        permissions: rwxr-xr-x
+      - '@id': node_189
+        name: backup.tar.gz
+        type: file
+        permissions: r--r--r--
+        size_mb: 1024
+        children:
+        - '@id': node_213
+          name: data.csv
+          type: archive
+          permissions: rw-r--r--
+          size_mb: 120
+        - '@id': node_218
+          name: user
+          type: directory
+          permissions: rw-r--r--
+          size_mb: 120
+    - '@id': node_35
+      name: bin
+      type: directory
+      permissions: rw-r--r--
+      size_mb: 0
+      children:
+      - '@id': node_38
+        name: documents
+        permissions: r--r--r--
+        children:
+        - '@ref': node_28
+        - '@id': node_223
+          name: bin
+          type: directory
+          permissions: rwxr-xr-x
+          size_mb: 120
+      - '@id': node_146
+        name: data.csv
+        type: executable
+        permissions: rwx------
+    - '@id': node_45
+      name: bin
+      type: directory
+      permissions: rwx------
+      size_mb: 120
+      children:
+      - '@id': node_180
+        name: backup.tar.gz
+        type: archive
+        size_mb: 1
+        children:
+        - '@id': node_187
+          name: bin
+          type: archive
+          permissions: rwx------
+          size_mb: 1024
+    - '@id': node_62
+      name: config.yaml
+      type: directory
+      permissions: rw-r--r--
+      size_mb: 1
+    - '@ref': node_61
+  - '@id': node_21
+    name: backup.tar.gz
+    type: executable
+    children:
+    - '@id': node_28
+      name: system
+      type: directory
+      permissions: rwx------
+      size_mb: 120
+      children:
+      - '@id': node_39
+        name: config.yaml
+        size_mb: 120
+        children:
+        - '@id': node_51
+          name: backup.tar.gz
+          permissions: rw-r--r--
+          size_mb: 120
+          children:
+          - '@id': node_79
+            name: system
+            type: file
+            size_mb: 0
+            children:
+            - '@id': node_152
+              name: user
+              type: directory
+              permissions: rwxr-xr-x
+              size_mb: 500
+              children:
+              - '@ref': node_182
+      - '@id': node_144
+        type: executable
+        permissions: rwxr-xr-x
+        name: system
+    - '@id': node_59
+      name: backup.tar.gz
+      type: executable
+      permissions: rw-r--r--
+      size_mb: 15
+    - '@id': node_73
+      type: executable
+      permissions: rwxr-xr-x
+      size_mb: 0
+      name: data.csv
+      children:
+      - '@id': node_133
+        name: bin
+        type: directory
+        size_mb: 1024
+        children:
+        - '@id': node_153
+          name: user
+          type: directory
+          permissions: r--r--r--
+          size_mb: 15
+    - '@id': node_184
+      name: bin
+      type: file
+      permissions: r--r--r--
+  - '@id': node_46
+    name: data.csv
+    type: directory
+    permissions: r--r--r--
+    size_mb: 0
+    children:
+    - '@id': node_76
+      type: file
+      permissions: r--r--r--
+      size_mb: 15
+      name: documents
+    - '@ref': node_50
+    - '@id': node_115
+      name: system
+      type: file
+      size_mb: 1
+      children:
+      - '@ref': node_93
+      - '@ref': node_40
+      - '@id': node_169
+        name: script.py
+        type: file
+        permissions: rwx------
+        size_mb: 1024
+    - '@id': node_190
+      type: archive
+      size_mb: 1024
+      name: documents
+  - '@ref': node_96
+- '@id': node_20
+  name: user
+  type: directory
+  permissions: rwxr-xr-x
+  children:
+  - '@id': node_122
+    name: system
+    type: directory
+    permissions: rwx------
+    size_mb: 15
+  - '@id': node_211
+    type: directory
+    permissions: r--r--r--
+    name: config.yaml
+  - '@id': node_225
+    type: executable
+    size_mb: 500
+    name: user
+- '@id': node_22
+  permissions: r--r--r--
+  name: user
+  children:
+  - '@id': node_42
+    name: config.yaml
+    size_mb: 0
+    children:
+    - '@id': node_106
+      name: backup.tar.gz
+      type: executable
+      size_mb: 120
+      children:
+      - '@id': node_120
+        name: config.yaml
+        type: file
+        permissions: r--r--r--
+        size_mb: 120
+        children:
+        - '@id': node_194
+          name: documents
+          type: archive
+          permissions: rw-r--r--
+          size_mb: 15
+          children:
+          - '@id': node_206
+            name: system
+            type: archive
+            permissions: rwx------
+            size_mb: 1
+          - '@id': node_209
+            name: documents
+            type: archive
+            permissions: r--r--r--
+            size_mb: 1
+- '@id': node_71
+  name: documents
+  permissions: rwxr-xr-x
+  size_mb: 15
+  children:
+  - '@ref': node_46
+  - '@id': node_242
+    name: system
+    type: archive
+    permissions: rwx------

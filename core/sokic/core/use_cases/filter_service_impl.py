@@ -5,7 +5,7 @@ from typing import Any, List, Tuple
 from sokic.api.services import FilterService
 from sokic.api.models import Graph, Node
 
-from core.sokic.core.use_cases.graph_utils import build_subgraph
+from sokic.core.use_cases.graph_utils import build_subgraph
 
 
 # ── ERRORS ────────────────────────────────────────────────────────────── #

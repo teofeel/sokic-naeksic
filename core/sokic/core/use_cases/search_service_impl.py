@@ -1,7 +1,7 @@
 from typing import List
 from sokic.api.services import SearchService
 from sokic.api.models import Graph, Node, Edge
-from core.sokic.core.use_cases.graph_utils import build_subgraph
+from sokic.core.use_cases.graph_utils import build_subgraph
 
 
 class SearchServiceImpl(SearchService):

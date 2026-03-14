@@ -1,4 +1,4 @@
-from core.sokic.core.use_cases.base_command import BaseCommand, CommandArguments
+from sokic.core.use_cases.base_command import BaseCommand, CommandArguments
 
 
 class SearchGraphCommand(BaseCommand):

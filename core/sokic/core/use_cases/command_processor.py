@@ -1,6 +1,6 @@
-from core.sokic.core.use_cases.workspace import Workspace
-from core.sokic.core.use_cases.base_command import CommandArguments
-from core.sokic.core.use_cases.command_factory import CommandFactory
+from sokic.core.use_cases.workspace import Workspace
+from sokic.core.use_cases.base_command import CommandArguments
+from sokic.core.use_cases.command_factory import CommandFactory
 
 
 class CommandProcessor:

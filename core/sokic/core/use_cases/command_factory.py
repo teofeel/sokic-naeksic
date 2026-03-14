@@ -1,9 +1,9 @@
 from typing import Final, Sequence
 
-from core.sokic.core.use_cases.base_command import BaseCommand, CommandArguments
-from core.sokic.core.use_cases.edge_commands import AddEdgeCommand, UpdateEdgeCommand, RemoveEdgeCommand
-from core.sokic.core.use_cases.graph_commands import FilterGraphCommand, SearchGraphCommand, DeleteGraphCommand
-from core.sokic.core.use_cases.node_commands import AddNodeCommand, UpdateNodeCommand, RemoveNodeCommand
+from sokic.core.use_cases.base_command import BaseCommand, CommandArguments
+from sokic.core.use_cases.edge_commands import AddEdgeCommand, UpdateEdgeCommand, RemoveEdgeCommand
+from sokic.core.use_cases.graph_commands import FilterGraphCommand, SearchGraphCommand, DeleteGraphCommand
+from sokic.core.use_cases.node_commands import AddNodeCommand, UpdateNodeCommand, RemoveNodeCommand
 
 
 class CommandFactory:

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sokic.api.services.workspace_repository import WorkspaceRepository
-from core.sokic.core.use_cases.workspace import Workspace
+from sokic.core.use_cases.workspace import Workspace
 
 class InMemoryWorkspaceRepository(WorkspaceRepository):
     def __init__(self):

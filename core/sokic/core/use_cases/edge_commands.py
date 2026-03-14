@@ -1,6 +1,6 @@
 from sokic.api.models import Edge
 
-from core.sokic.core.use_cases.base_command import BaseCommand, CommandArguments
+from sokic.core.use_cases.base_command import BaseCommand, CommandArguments
 
 
 class AddEdgeCommand(BaseCommand):

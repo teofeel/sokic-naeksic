@@ -1,7 +1,7 @@
 from sokic.api.models import Node
 
-from core.sokic.core.use_cases.workspace import Workspace
-from core.sokic.core.use_cases.base_command import BaseCommand, CommandArguments
+from sokic.core.use_cases.workspace import Workspace
+from sokic.core.use_cases.base_command import BaseCommand, CommandArguments
 
 
 class AddNodeCommand(BaseCommand):
